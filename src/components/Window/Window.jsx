@@ -86,7 +86,8 @@ export const Window = ({ windowData }) => {
   const snapPreviewRef = useRef(null);
 
   const isResizing = useRef(false);
-  const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0 });
+  const resizeDirection = useRef('se');
+  const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0, posX: 0, posY: 0 });
 
   const isActive = activeWindowId === windowData.id;
 
@@ -103,18 +104,21 @@ export const Window = ({ windowData }) => {
     focusWindow(windowData.id);
   };
 
-  // Resize handler
-  const handleResizeMouseDown = (e) => {
+  // Directional Resize handler (se, sw, ne, nw, e, w, s, n)
+  const handleResizeMouseDown = (e, dir = 'se') => {
     e.stopPropagation();
     e.preventDefault();
     if (windowData.isMaximized) return;
 
     isResizing.current = true;
+    resizeDirection.current = dir;
     resizeStart.current = {
       x: e.clientX,
       y: e.clientY,
       width: windowData.size.width,
-      height: windowData.size.height
+      height: windowData.size.height,
+      posX: windowData.position.x,
+      posY: windowData.position.y
     };
     focusWindow(windowData.id);
   };
@@ -147,9 +151,45 @@ export const Window = ({ windowData }) => {
       if (isResizing.current) {
         const deltaX = e.clientX - resizeStart.current.x;
         const deltaY = e.clientY - resizeStart.current.y;
-        const newWidth = Math.max(340, resizeStart.current.width + deltaX);
-        const newHeight = Math.max(240, resizeStart.current.height + deltaY);
+        const minW = 320;
+        const minH = 220;
+        const dir = resizeDirection.current;
+
+        let newWidth = resizeStart.current.width;
+        let newHeight = resizeStart.current.height;
+        let newPosX = resizeStart.current.posX;
+        let newPosY = resizeStart.current.posY;
+
+        if (dir.includes('e')) {
+          newWidth = Math.max(minW, resizeStart.current.width + deltaX);
+        } else if (dir.includes('w')) {
+          const candidateWidth = resizeStart.current.width - deltaX;
+          if (candidateWidth >= minW) {
+            newWidth = candidateWidth;
+            newPosX = resizeStart.current.posX + deltaX;
+          } else {
+            newWidth = minW;
+            newPosX = resizeStart.current.posX + (resizeStart.current.width - minW);
+          }
+        }
+
+        if (dir.includes('s')) {
+          newHeight = Math.max(minH, resizeStart.current.height + deltaY);
+        } else if (dir.includes('n')) {
+          const candidateHeight = resizeStart.current.height - deltaY;
+          if (candidateHeight >= minH) {
+            newHeight = candidateHeight;
+            newPosY = Math.max(32, resizeStart.current.posY + deltaY);
+          } else {
+            newHeight = minH;
+            newPosY = resizeStart.current.posY + (resizeStart.current.height - minH);
+          }
+        }
+
         updateWindowSize(windowData.id, { width: newWidth, height: newHeight });
+        if (newPosX !== windowData.position.x || newPosY !== windowData.position.y) {
+          updateWindowPosition(windowData.id, { x: newPosX, y: newPosY });
+        }
       }
     };
 
@@ -581,13 +621,18 @@ export const Window = ({ windowData }) => {
         )}
       </div>
 
-      {/* Resize Handle (Bottom-Right) */}
+      {/* 4 Corners & 4 Edges Resize Handles */}
       {!windowData.isMaximized && (
-        <div
-          className="resize-handle resize-se"
-          onMouseDown={handleResizeMouseDown}
-          title="Redimensionner"
-        />
+        <>
+          <div className="resize-handle resize-se" onMouseDown={(e) => handleResizeMouseDown(e, 'se')} title="Redimensionner" />
+          <div className="resize-handle resize-sw" onMouseDown={(e) => handleResizeMouseDown(e, 'sw')} title="Redimensionner" />
+          <div className="resize-handle resize-ne" onMouseDown={(e) => handleResizeMouseDown(e, 'ne')} title="Redimensionner" />
+          <div className="resize-handle resize-nw" onMouseDown={(e) => handleResizeMouseDown(e, 'nw')} title="Redimensionner" />
+          <div className="resize-handle resize-e" onMouseDown={(e) => handleResizeMouseDown(e, 'e')} />
+          <div className="resize-handle resize-w" onMouseDown={(e) => handleResizeMouseDown(e, 'w')} />
+          <div className="resize-handle resize-s" onMouseDown={(e) => handleResizeMouseDown(e, 's')} />
+          <div className="resize-handle resize-n" onMouseDown={(e) => handleResizeMouseDown(e, 'n')} />
+        </>
       )}
     </div>
   </>

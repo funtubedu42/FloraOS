@@ -375,19 +375,54 @@ input, textarea, [contenteditable="true"] {
   height: 16px;
   cursor: se-resize;
 }
+.resize-sw {
+  left: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: sw-resize;
+}
+.resize-ne {
+  right: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  cursor: ne-resize;
+}
+.resize-nw {
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nw-resize;
+}
 .resize-e {
   right: 0;
-  top: 10px;
-  bottom: 10px;
+  top: 14px;
+  bottom: 14px;
   width: 6px;
   cursor: e-resize;
 }
+.resize-w {
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 6px;
+  cursor: w-resize;
+}
 .resize-s {
-  left: 10px;
-  right: 10px;
+  left: 14px;
+  right: 14px;
   bottom: 0;
   height: 6px;
   cursor: s-resize;
+}
+.resize-n {
+  left: 14px;
+  right: 14px;
+  top: 0;
+  height: 6px;
+  cursor: n-resize;
 }
 
 /* Dock */

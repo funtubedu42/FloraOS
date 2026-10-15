@@ -11,11 +11,12 @@ import {
   Download,
   Save,
   Trash2,
-  Type
+  Type,
+  Eye
 } from 'lucide-react';
 
-export const FloraPaint = ({ windowData }) => {
-  const { createFile, notify, playSuccessSound, currentUser, getActiveDesktopId } = useOS();
+export const FloraPaint = ({ windowData, registerUnsavedHandler }) => {
+  const { createFile, openApp, notify, playSuccessSound, currentUser, getActiveDesktopId } = useOS();
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -25,6 +26,7 @@ export const FloraPaint = ({ windowData }) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [history, setHistory] = useState([]);
   const [historyStep, setHistoryStep] = useState(-1);
+  const [hasUnsaved, setHasUnsaved] = useState(false);
   const startPos = useRef({ x: 0, y: 0 });
   const snapshot = useRef(null);
 
@@ -62,6 +64,7 @@ export const FloraPaint = ({ windowData }) => {
     newHistory.push(canvas.toDataURL());
     setHistory(newHistory);
     setHistoryStep(newStep);
+    setHasUnsaved(true);
   };
 
   const handleUndo = () => {
@@ -188,6 +191,13 @@ export const FloraPaint = ({ windowData }) => {
     playSuccessSound();
   };
 
+  // Hook into OS window closing confirmation
+  useEffect(() => {
+    if (registerUnsavedHandler) {
+      registerUnsavedHandler(hasUnsaved, saveToOS);
+    }
+  }, [hasUnsaved, registerUnsavedHandler]);
+
   // Save directly to FloraOS virtual filesystem
   const saveToOS = () => {
     const canvas = canvasRef.current;
@@ -197,9 +207,23 @@ export const FloraPaint = ({ windowData }) => {
     const fileName = `Dessin_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}_${Date.now().toString().slice(-4)}.png`;
 
     const targetFolder = getActiveDesktopId();
-    createFile(targetFolder, fileName, dataUrl);
+    const newFileId = createFile(targetFolder, fileName, dataUrl);
+    setHasUnsaved(false);
     playSuccessSound();
-    notify('FloraPaint', `« ${fileName} » a été enregistré sur votre Bureau.`, '/apps/paint_app.png');
+    notify(
+      'FloraPaint',
+      `« ${fileName} » enregistré. Cliquez pour ouvrir dans Photos.`,
+      '/apps/paint_app.png',
+      () => openApp('imageViewer', { id: newFileId, name: fileName, content: dataUrl })
+    );
+    return newFileId;
+  };
+
+  const openInPhotos = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dataUrl = canvas.toDataURL('image/png');
+    openApp('imageViewer', { id: null, name: 'Aperçu FloraPaint', content: dataUrl });
   };
 
   return (
@@ -381,6 +405,26 @@ export const FloraPaint = ({ windowData }) => {
             }}
           >
             <Save size={14} /> Enregistrer
+          </button>
+
+          <button
+            onClick={openInPhotos}
+            title="Ouvrir dans la visionneuse de photos"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              color: '#38bdf8',
+              fontSize: '12px',
+              fontWeight: 500,
+              cursor: 'pointer'
+            }}
+          >
+            <Eye size={14} /> Photos
           </button>
 
           <button
