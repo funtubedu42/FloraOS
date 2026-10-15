@@ -59,7 +59,7 @@ export const OSProvider = ({ children }) => {
     return [
       {
         id: 'u_master',
-        name: 'Luca',
+        name: 'Administrateur',
         avatar: getAssetPath('/apps/user.png'),
         role: 'Administrateur',
         pin: '1234',
@@ -648,7 +648,7 @@ export const OSProvider = ({ children }) => {
     const hasPassword = adminUser.hasPassword !== false && Boolean(adminUser.pin);
     const adminObj = {
       id: 'u_master',
-      name: adminUser.name || 'Luca',
+      name: adminUser.name?.trim() || 'Administrateur',
       avatar: adminUser.avatar || getAssetPath('/apps/user.png'),
       role: 'Administrateur',
       hasPassword,
@@ -1711,8 +1711,8 @@ export const OSProvider = ({ children }) => {
     setUsers([
       {
         id: 'u_master',
-        name: 'Luca',
-        avatar: '/apps/user.png',
+        name: 'Administrateur',
+        avatar: getAssetPath('/apps/user.png'),
         role: 'Administrateur',
         pin: '1234',
         createdAt: Date.now()

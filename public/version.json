@@ -3,7 +3,7 @@
   "name": "FloraOS Evergreen Edition",
   "build": "20261015.1",
   "releaseDate": "15 Octobre 2026",
-  "githubRepo": "lucas/FloraOS",
+  "githubRepo": "funtubedu42/FloraOS",
   "changelog": [
     "Navigateur FloraWeb avec FloraTube (YouTube sans blocage) et FloraSearch",
     "Système complet de mise à jour automatique et vérification manuelle",

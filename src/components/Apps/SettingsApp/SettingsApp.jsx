@@ -1686,7 +1686,7 @@ export const SettingsApp = () => {
                     type="text"
                     value={settings.githubRepo || ''}
                     onChange={(e) => setSettings(prev => ({ ...prev, githubRepo: e.target.value }))}
-                    placeholder="ex: lucas/FloraOS"
+                    placeholder="ex: funtubedu42/FloraOS"
                     style={{
                       flex: 1,
                       padding: '8px 12px',

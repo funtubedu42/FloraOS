@@ -72,7 +72,7 @@ export const Terminal = () => {
         return;
 
       case 'whoami':
-        newHistory.push({ text: `${user?.name || 'Luca'} (${user?.role || 'Utilisateur'})`, type: 'output' });
+        newHistory.push({ text: `${user?.name || 'admin'} (${user?.role || 'Utilisateur'})`, type: 'output' });
         break;
 
       case 'date':
@@ -281,7 +281,7 @@ export const Terminal = () => {
 
       <form onSubmit={handleCommand} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
         <span style={{ color: '#10b981', fontWeight: 600, whiteSpace: 'nowrap' }}>
-          {user?.name || 'Luca'}@floraos:~/{currentFolder.name || 'bureau'}$
+          {user?.name ? user.name.toLowerCase().replace(/\s+/g, '') : 'admin'}@floraos:~/{currentFolder.name || 'bureau'}$
         </span>
         <input
           ref={inputRef}

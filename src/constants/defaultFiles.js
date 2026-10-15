@@ -409,7 +409,7 @@ export const INITIAL_FILE_SYSTEM = {
     parentId: 'logs_dir',
     isSystem: true,
     iconImg: '/apps/notes.png',
-    content: `[FloraOS Security Log]\n[AUTH] Multi-user session manager initialized.\n[AUTH] Luca (Admin) session authenticated via local credential vault.\n[AUTH] Permission token issued: ROLE_ADMINISTRATOR.\n[AUDIT] Protected system nodes locked: Kernel, Drivers, Libs, Config set to Read-Only.`,
+    content: `[FloraOS Security Log]\n[AUTH] Multi-user session manager initialized.\n[AUTH] Admin session authenticated via local credential vault.\n[AUTH] Permission token issued: ROLE_ADMINISTRATOR.\n[AUDIT] Protected system nodes locked: Kernel, Drivers, Libs, Config set to Read-Only.`,
     size: '280 B',
     createdAt: Date.now() - 86400000 * 3
   },
@@ -698,7 +698,7 @@ export const INITIAL_FILE_SYSTEM = {
     parentId: 'temp_dir',
     isSystem: true,
     iconImg: '/apps/terminal.png',
-    content: 'PID=1\nUSER=Luca\nACTIVE=TRUE',
+    content: 'PID=1\nUSER=admin\nACTIVE=TRUE',
     size: '28 B',
     createdAt: Date.now()
   },
@@ -741,7 +741,7 @@ export const INITIAL_FILE_SYSTEM = {
 
   user_u_master: {
     id: 'user_u_master',
-    name: 'Luca (Admin)',
+    name: 'Administrateur',
     type: 'folder',
     parentId: 'users_root',
     children: [

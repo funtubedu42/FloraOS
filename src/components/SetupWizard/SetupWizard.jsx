@@ -46,7 +46,7 @@ const STEPS_NAV = [
 export const SetupWizard = () => {
   const { completeInstallation } = useOS();
   const [step, setStep] = useState(1);
-  const [name, setName] = useState('Luca');
+  const [name, setName] = useState('');
   const [avatar, setAvatar] = useState(getAssetPath('/apps/user.png'));
   const [hasPassword, setHasPassword] = useState(false);
   const [pin, setPin] = useState('');
@@ -650,7 +650,7 @@ export const SetupWizard = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: Luca"
+                  placeholder="Ex: Utilisateur ou Alex"
                   style={{
                     width: '100%',
                     padding: '12px 16px',
@@ -1259,7 +1259,7 @@ export const SetupWizard = () => {
                   Administrateur
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc', marginTop: '2px' }}>
-                  {name.trim() || 'Luca'}
+                  {name.trim() || 'Administrateur'}
                 </div>
               </div>
 

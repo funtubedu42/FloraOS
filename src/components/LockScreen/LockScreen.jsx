@@ -131,7 +131,7 @@ export const LockScreen = () => {
           marginBottom: users && users.length > 1 ? '10px' : '18px',
           letterSpacing: '-0.2px'
         }}>
-          {user.name || 'Luca'}
+          {user.name || 'Utilisateur'}
         </div>
 
         {/* Multi-user picker if multiple accounts */}
