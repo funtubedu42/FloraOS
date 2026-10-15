@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useOS } from '../../context/OSContext';
+import { getAssetPath } from '../../utils/paths';
 import {
   FolderPlus,
   FilePlus,
@@ -649,7 +650,7 @@ export const ContextMenu = () => {
                   }}
                 >
                   {app.iconImg ? (
-                    <img src={app.iconImg} alt="" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                    <img src={getAssetPath(app.iconImg)} alt="" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                   ) : null}
                   <span style={{ fontWeight: 600, fontSize: '12px', color: '#f1f5f9' }}>
                     {appTitle}

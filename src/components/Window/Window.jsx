@@ -15,6 +15,7 @@ import { CalendarApp } from '../Apps/CalendarApp/CalendarApp';
 import { BrowserApp } from '../Apps/BrowserApp/BrowserApp';
 import { Minus, Square, Copy, X } from 'lucide-react';
 import { playWarningSound } from '../../utils/audio';
+import { getAssetPath } from '../../utils/paths';
 
 const APP_COMPONENTS = {
   explorer: FileExplorer,
@@ -190,11 +191,11 @@ export const Window = ({ windowData }) => {
           }}
         >
           <img
-            src={windowData.iconImg || '/apps/default_app.png'}
+            src={getAssetPath(windowData.iconImg || '/apps/default_app.png')}
             alt=""
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = '/apps/default_app.png';
+              e.currentTarget.src = getAssetPath('/apps/default_app.png');
             }}
             style={{ width: '18px', height: '18px', objectFit: 'contain' }}
           />

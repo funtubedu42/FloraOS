@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
 import { DynamicIcon, getFileIconDetails } from '../../utils/IconHelper';
+import { getAssetPath } from '../../utils/paths';
 
 export const DesktopIcon = ({ nodeId, isSelected, onSelect, defaultPos }) => {
   const {
@@ -177,13 +178,13 @@ export const DesktopIcon = ({ nodeId, isSelected, onSelect, defaultPos }) => {
       <div className="desktop-icon-visual" style={{ position: 'relative' }}>
         {imageSrc ? (
           <img
-            src={imageSrc}
+            src={getAssetPath(imageSrc)}
             alt={node.name}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = '/apps/default_app.png';
+              e.currentTarget.src = getAssetPath('/apps/default_app.png');
             }}
             style={{
               width: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,

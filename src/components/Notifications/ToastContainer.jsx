@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOS } from '../../context/OSContext';
 import { DynamicIcon } from '../../utils/IconHelper';
+import { getAssetPath } from '../../utils/paths';
 import { X } from 'lucide-react';
 
 export const ToastContainer = () => {
@@ -47,7 +48,7 @@ export const ToastContainer = () => {
                 background: 'rgba(255, 255, 255, 0.08)'
               }}>
                 {n.icon?.startsWith('/') ? (
-                  <img src={n.icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={getAssetPath(n.icon)} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 ) : (
                   <DynamicIcon name={n.icon || 'Bell'} size={12} color={n.isWarning ? '#ef4444' : 'var(--accent-color, #10b981)'} />
                 )}

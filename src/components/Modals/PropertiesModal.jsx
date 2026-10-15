@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Minus, Square, X, Copy, Check, Lock, Info, Folder, FileText, Globe, ExternalLink } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
+import { getAssetPath } from '../../utils/paths';
 
 export const PropertiesModal = () => {
   const {
@@ -144,13 +145,13 @@ export const PropertiesModal = () => {
     }
   };
 
-  const iconSrc = node.iconImg || (
+  const iconSrc = getAssetPath(node.iconImg || (
     isFolder ? '/apps/folder.png' :
     isWeb ? '/apps/web.png' :
     node.extension === 'txt' ? '/apps/text_editor.png' :
     node.extension === 'pdf' ? '/apps/pdf_viewer.png' :
     '/apps/default_app.png'
-  );
+  ));
 
   return (
     <div
@@ -305,7 +306,7 @@ export const PropertiesModal = () => {
               alt=""
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = isFolder ? '/apps/folder.png' : '/apps/default_app.png';
+                e.currentTarget.src = getAssetPath(isFolder ? '/apps/folder.png' : '/apps/default_app.png');
               }}
               style={{ width: '44px', height: '44px', objectFit: 'contain' }}
             />

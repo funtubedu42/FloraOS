@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useOS } from '../../context/OSContext';
 import { DynamicIcon } from '../../utils/IconHelper';
+import { getAssetPath } from '../../utils/paths';
 import { Bell, Trash2, X, Calendar as CalendarIcon, Clock } from 'lucide-react';
 
 export const NotificationCenter = () => {
@@ -151,7 +152,7 @@ export const NotificationCenter = () => {
                 flexShrink: 0
               }}>
                 {notif.icon?.startsWith('/') ? (
-                  <img src={notif.icon} alt="" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                  <img src={getAssetPath(notif.icon)} alt="" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                 ) : (
                   <DynamicIcon
                     name={notif.icon || 'Bell'}

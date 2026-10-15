@@ -2,6 +2,7 @@ import React from 'react';
 import { useOS } from '../../context/OSContext';
 import { APPS } from '../../constants/apps';
 import { DynamicIcon } from '../../utils/IconHelper';
+import { getAssetPath } from '../../utils/paths';
 import { Trash2, Trash } from 'lucide-react';
 
 export const Dock = () => {
@@ -64,7 +65,7 @@ export const Dock = () => {
       >
         <div className="dock-tooltip">Menu FloraOS</div>
         <img
-          src="/apps/home.png"
+          src={getAssetPath('/apps/home.png')}
           alt="Home"
           style={{ width: '24px', height: '24px', objectFit: 'contain' }}
         />
@@ -92,7 +93,7 @@ export const Dock = () => {
             <div className="dock-tooltip">{app.name}</div>
             {app.iconImg ? (
               <img
-                src={app.iconImg}
+                src={getAssetPath(app.iconImg)}
                 alt={app.name}
                 style={{ width: '25px', height: '25px', objectFit: 'contain' }}
               />

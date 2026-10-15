@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Minus, Square, X, Link, Globe, Folder, FileText, Sparkles, Check } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
+import { getAssetPath } from '../../utils/paths';
 
 export const CreateShortcutModal = () => {
   const {
@@ -439,11 +440,11 @@ export const CreateShortcutModal = () => {
                 background: 'rgba(255, 255, 255, 0.06)'
               }}>
                 <img
-                  src={detectedTarget.icon}
+                  src={getAssetPath(detectedTarget.icon)}
                   alt=""
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/apps/web.png';
+                    e.currentTarget.src = getAssetPath('/apps/web.png');
                   }}
                   style={{ width: '32px', height: '32px', objectFit: 'contain' }}
                 />

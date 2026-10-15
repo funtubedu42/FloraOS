@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useOS } from '../../../context/OSContext';
 import { DynamicIcon, getFileIconDetails } from '../../../utils/IconHelper';
+import { getAssetPath } from '../../../utils/paths';
 
 export const FileExplorer = ({ windowData }) => {
   const {
@@ -270,15 +271,15 @@ export const FileExplorer = ({ windowData }) => {
   const videosId = `videos_${user?.id || 'u_master'}`;
 
   const sidebarLinks = [
-    { id: fileSystem[userHomeId] ? userHomeId : (fileSystem.home ? 'home' : 'root'), label: 'Dossier personnel', iconImg: '/apps/home.png' },
-    { id: fileSystem[desktopId] ? desktopId : 'desktop', label: 'Bureau', iconImg: '/apps/computer.png' },
-    { id: fileSystem[documentsId] ? documentsId : 'documents', iconImg: '/apps/doc_file.png', label: 'Documents' },
-    { id: fileSystem[imagesId] ? imagesId : 'images', iconImg: '/apps/photos.png', label: 'Images' },
-    { id: fileSystem[musicId] ? musicId : 'music', iconImg: '/apps/music_files.png', label: 'Musique' },
-    { id: fileSystem[downloadsId] ? downloadsId : 'downloads', iconImg: '/apps/compressed_file.png', label: 'Téléchargements' },
-    { id: fileSystem[videosId] ? videosId : 'videos', iconImg: '/apps/video.png', label: 'Vidéos' },
-    { id: 'root', label: 'Système FloraOS', iconImg: '/apps/disk.png' },
-    { id: 'trash', label: 'Corbeille', iconImg: '/apps/bin.png' }
+    { id: fileSystem[userHomeId] ? userHomeId : (fileSystem.home ? 'home' : 'root'), label: 'Dossier personnel', iconImg: getAssetPath('/apps/home.png') },
+    { id: fileSystem[desktopId] ? desktopId : 'desktop', label: 'Bureau', iconImg: getAssetPath('/apps/computer.png') },
+    { id: fileSystem[documentsId] ? documentsId : 'documents', iconImg: getAssetPath('/apps/doc_file.png'), label: 'Documents' },
+    { id: fileSystem[imagesId] ? imagesId : 'images', iconImg: getAssetPath('/apps/photos.png'), label: 'Images' },
+    { id: fileSystem[musicId] ? musicId : 'music', iconImg: getAssetPath('/apps/music_files.png'), label: 'Musique' },
+    { id: fileSystem[downloadsId] ? downloadsId : 'downloads', iconImg: getAssetPath('/apps/compressed_file.png'), label: 'Téléchargements' },
+    { id: fileSystem[videosId] ? videosId : 'videos', iconImg: getAssetPath('/apps/video.png'), label: 'Vidéos' },
+    { id: 'root', label: 'Système FloraOS', iconImg: getAssetPath('/apps/disk.png') },
+    { id: 'trash', label: 'Corbeille', iconImg: getAssetPath('/apps/bin.png') }
   ];
 
   return (
@@ -786,7 +787,7 @@ export const FileExplorer = ({ windowData }) => {
                           onDragStart={(e) => e.preventDefault()}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = '/apps/default_app.png';
+                            e.currentTarget.src = getAssetPath('/apps/default_app.png');
                           }}
                           style={{ width: '42px', height: '42px', objectFit: 'contain' }}
                         />
@@ -930,7 +931,7 @@ export const FileExplorer = ({ windowData }) => {
                           onDragStart={(e) => e.preventDefault()}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = '/apps/default_app.png';
+                            e.currentTarget.src = getAssetPath('/apps/default_app.png');
                           }}
                           style={{ width: '18px', height: '18px', objectFit: 'contain' }}
                         />

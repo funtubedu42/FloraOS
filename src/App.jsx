@@ -14,6 +14,7 @@ import { RenameModal } from './components/Modals/RenameModal';
 import { PropertiesModal } from './components/Modals/PropertiesModal';
 import { CreateShortcutModal } from './components/Modals/CreateShortcutModal';
 import { SystemUpdateModal } from './components/Modals/SystemUpdateModal';
+import { getAssetPath } from './utils/paths';
 
 const OSContent = () => {
   const {
@@ -200,7 +201,7 @@ const OSContent = () => {
     };
   }, [windows, activeWindowId, openApp, closeWindow, minimizeWindow, focusWindow, toggleStartMenu, lockSession, createFolder, setIsStartMenuOpen, setActiveWindowId]);
 
-  const wallpaperUrl = settings.wallpaper?.url || '/wallpapers/emerald_forest.jpg';
+  const wallpaperUrl = getAssetPath(settings.wallpaper?.url || '/wallpapers/floraos_default.png');
 
   return (
     <div

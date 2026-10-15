@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useOS } from '../../context/OSContext';
 import { APPS } from '../../constants/apps';
 import { DynamicIcon } from '../../utils/IconHelper';
+import { getAssetPath } from '../../utils/paths';
 import { Search, Lock, Power, RotateCcw, Settings, User } from 'lucide-react';
 
 export const StartMenu = () => {
@@ -130,13 +131,13 @@ export const StartMenu = () => {
               marginBottom: '6px'
             }}>
               <img
-                src={app.iconImg || '/apps/default_app.png'}
+                src={getAssetPath(app.iconImg || '/apps/default_app.png')}
                 alt={app.name}
                 draggable={false}
                 onDragStart={(e) => e.preventDefault()}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/apps/default_app.png';
+                  e.currentTarget.src = getAssetPath('/apps/default_app.png');
                 }}
                 style={{ width: '26px', height: '26px', objectFit: 'contain' }}
               />
@@ -206,7 +207,7 @@ export const StartMenu = () => {
             fontSize: '15px'
           }}>
             {user.avatar?.startsWith('/') ? (
-              <img src={user.avatar} alt="avatar" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+              <img src={getAssetPath(user.avatar)} alt="avatar" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
             ) : (
               user.avatar || '🌿'
             )}

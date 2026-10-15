@@ -1,3 +1,5 @@
+import { getAssetPath } from './paths';
+
 // Web Audio API & Custom Audio Files Engine for FloraOS
 // Dual-mode audio engine:
 // 1. Automatically detects and plays real audio files placed in /public/sounds/
@@ -22,12 +24,12 @@ const getAudioContext = () => {
 
 // Candidate paths for custom audio in /public/sounds/
 const CUSTOM_AUDIO_CANDIDATES = {
-  error: ['/sounds/error.mp3', '/sounds/error.wav', '/sounds/error.ogg', '/sounds/warning.mp3', '/sounds/warning.wav'],
-  notification: ['/sounds/notification.mp3', '/sounds/notification.wav', '/sounds/notification.ogg', '/sounds/chime.mp3'],
-  click: ['/sounds/click.mp3', '/sounds/click.wav', '/sounds/click.ogg'],
-  window_open: ['/sounds/window_open.mp3', '/sounds/window_open.wav', '/sounds/window_open.ogg'],
-  success: ['/sounds/success.mp3', '/sounds/success.wav', '/sounds/success.ogg'],
-  startup: ['/sounds/startup.mp3', '/sounds/startup.wav', '/sounds/startup.ogg']
+  error: [getAssetPath('/sounds/error.mp3'), getAssetPath('/sounds/error.wav'), getAssetPath('/sounds/error.ogg'), getAssetPath('/sounds/warning.mp3'), getAssetPath('/sounds/warning.wav')],
+  notification: [getAssetPath('/sounds/notification.mp3'), getAssetPath('/sounds/notification.wav'), getAssetPath('/sounds/notification.ogg'), getAssetPath('/sounds/chime.mp3')],
+  click: [getAssetPath('/sounds/click.mp3'), getAssetPath('/sounds/click.wav'), getAssetPath('/sounds/click.ogg')],
+  window_open: [getAssetPath('/sounds/window_open.mp3'), getAssetPath('/sounds/window_open.wav'), getAssetPath('/sounds/window_open.ogg')],
+  success: [getAssetPath('/sounds/success.mp3'), getAssetPath('/sounds/success.wav'), getAssetPath('/sounds/success.ogg')],
+  startup: [getAssetPath('/sounds/startup.mp3'), getAssetPath('/sounds/startup.wav'), getAssetPath('/sounds/startup.ogg')]
 };
 
 // Active verified custom sound files

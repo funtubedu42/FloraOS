@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useOS } from '../../context/OSContext';
 import { APPS } from '../../constants/apps';
+import { getAssetPath } from '../../utils/paths';
 import { ControlCenter } from '../TopBar/ControlCenter';
 import { NotificationCenter } from '../Notifications/NotificationCenter';
 import {
@@ -168,7 +169,7 @@ export const TaskBar = () => {
           >
             {/* FloraOS Start Button OS Icon (with SVG fallback) */}
             <img
-              src="/apps/os_icon.png"
+              src={getAssetPath('/apps/os_icon.png')}
               alt="FloraOS"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -228,13 +229,13 @@ export const TaskBar = () => {
                 >
                   {/* Icon */}
                   <img
-                    src={app.iconImg || '/apps/default_app.png'}
+                    src={getAssetPath(app.iconImg || '/apps/default_app.png')}
                     alt={app.title || app.name}
                     draggable={false}
                     onDragStart={(e) => e.preventDefault()}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/apps/default_app.png';
+                      e.currentTarget.src = getAssetPath('/apps/default_app.png');
                     }}
                     style={{ width: '24px', height: '24px', objectFit: 'contain' }}
                   />
@@ -448,11 +449,11 @@ export const TaskBar = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '125px' }}>
                     <img
-                      src={hoveredApp.iconImg || '/apps/default_app.png'}
+                      src={getAssetPath(hoveredApp.iconImg || '/apps/default_app.png')}
                       alt=""
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/apps/default_app.png';
+                        e.currentTarget.src = getAssetPath('/apps/default_app.png');
                       }}
                       style={{ width: '13px', height: '13px', objectFit: 'contain' }}
                     />
@@ -514,11 +515,11 @@ export const TaskBar = () => {
                   </div>
 
                   <img
-                    src={hoveredApp.iconImg || '/apps/default_app.png'}
+                    src={getAssetPath(hoveredApp.iconImg || '/apps/default_app.png')}
                     alt=""
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/apps/default_app.png';
+                      e.currentTarget.src = getAssetPath('/apps/default_app.png');
                     }}
                     style={{ width: '28px', height: '28px', objectFit: 'contain', opacity: 0.9, marginTop: '8px' }}
                   />

@@ -1,74 +1,76 @@
+import { getAssetPath } from '../utils/paths';
+
 export const WALLPAPERS = [
   {
     id: 'floraos-default',
     name: 'FloraOS Par Défaut',
     category: 'FloraOS',
-    url: '/wallpapers/floraos_default.png',
-    thumb: '/wallpapers/floraos_default.png',
+    url: getAssetPath('/wallpapers/floraos_default.png'),
+    thumb: getAssetPath('/wallpapers/floraos_default.png'),
     color: '#0f172a'
   },
   {
     id: 'emerald-forest',
     name: 'Forêt d\'Émeraude',
     category: 'Nature',
-    url: '/wallpapers/emerald_forest.jpg',
-    thumb: '/wallpapers/emerald_forest.jpg',
+    url: getAssetPath('/wallpapers/emerald_forest.jpg'),
+    thumb: getAssetPath('/wallpapers/emerald_forest.jpg'),
     color: '#064e3b'
   },
   {
     id: 'nordic-aurora',
     name: 'Aurore Boréale',
     category: 'Ciel & Espace',
-    url: '/wallpapers/nordic_aurora.jpg',
-    thumb: '/wallpapers/nordic_aurora.jpg',
+    url: getAssetPath('/wallpapers/nordic_aurora.jpg'),
+    thumb: getAssetPath('/wallpapers/nordic_aurora.jpg'),
     color: '#0c4a6e'
   },
   {
     id: 'cyber-dark',
     name: 'Flora Sombre',
     category: 'Minimaliste',
-    url: '/wallpapers/cyber_dark.jpg',
-    thumb: '/wallpapers/cyber_dark.jpg',
+    url: getAssetPath('/wallpapers/cyber_dark.jpg'),
+    thumb: getAssetPath('/wallpapers/cyber_dark.jpg'),
     color: '#0f172a'
   },
   {
     id: 'neon-gradient',
     name: 'Gradient Flora',
     category: 'Abstrait',
-    url: '/wallpapers/neon_gradient.jpg',
-    thumb: '/wallpapers/neon_gradient.jpg',
+    url: getAssetPath('/wallpapers/neon_gradient.jpg'),
+    thumb: getAssetPath('/wallpapers/neon_gradient.jpg'),
     color: '#312e81'
   },
   {
     id: 'mountain-peak',
     name: 'Sommet Enneigé',
     category: 'Montagne',
-    url: '/wallpapers/mountain_peak.jpg',
-    thumb: '/wallpapers/mountain_peak.jpg',
+    url: getAssetPath('/wallpapers/mountain_peak.jpg'),
+    thumb: getAssetPath('/wallpapers/mountain_peak.jpg'),
     color: '#1e293b'
   },
   {
     id: 'sunset-dunes',
     name: 'Dunes Crépusculaires',
     category: 'Désert',
-    url: '/wallpapers/sunset_dunes.jpg',
-    thumb: '/wallpapers/sunset_dunes.jpg',
+    url: getAssetPath('/wallpapers/sunset_dunes.jpg'),
+    thumb: getAssetPath('/wallpapers/sunset_dunes.jpg'),
     color: '#831843'
   },
   {
     id: 'zen-leaves',
     name: 'Feuilles Tropicales',
     category: 'Botanique',
-    url: '/wallpapers/botanical_zen.jpg',
-    thumb: '/wallpapers/botanical_zen.jpg',
+    url: getAssetPath('/wallpapers/botanical_zen.jpg'),
+    thumb: getAssetPath('/wallpapers/botanical_zen.jpg'),
     color: '#047857'
   },
   {
     id: 'deep-space',
     name: 'Espace Infini',
     category: 'Espace',
-    url: '/wallpapers/deep_space.jpg',
-    thumb: '/wallpapers/deep_space.jpg',
+    url: getAssetPath('/wallpapers/deep_space.jpg'),
+    thumb: getAssetPath('/wallpapers/deep_space.jpg'),
     color: '#1e1b4b'
   }
 ];
