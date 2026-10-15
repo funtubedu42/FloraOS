@@ -1,0 +1,14 @@
+{
+  "version": "1.2.0",
+  "name": "FloraOS Evergreen Edition",
+  "build": "20261015.1",
+  "releaseDate": "15 Octobre 2026",
+  "githubRepo": "lucas/FloraOS",
+  "changelog": [
+    "Navigateur FloraWeb avec FloraTube (YouTube sans blocage) et FloraSearch",
+    "Système complet de mise à jour automatique et vérification manuelle",
+    "Support étendu des sons personnalisés dans /public/sounds",
+    "Amélioration de l'explorateur de fichiers et des raccourcis bureau",
+    "Gestion avancée du stockage et métriques matérielles dans les Paramètres"
+  ]
+}
