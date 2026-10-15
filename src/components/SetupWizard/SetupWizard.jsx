@@ -66,7 +66,7 @@ export const SetupWizard = () => {
   const terminalEndRef = useRef(null);
 
   const INSTALL_MODULES = [
-    { title: 'Initialisation du micro-noyau FloraCore 2.6', detail: 'Chargement des modules Wasm & runtime audio...' },
+    { title: 'Initialisation du micro-noyau FloraCore 0.2', detail: 'Chargement des modules Wasm & runtime audio...' },
     { title: 'Montage du système de fichiers isolé', detail: 'Création des répertoires sandbox et arborescence système...' },
     { title: 'Déploiement des applications par défaut', detail: 'Installation de Horloge, Calendrier, Explorateur, FloraStore...' },
     { title: 'Sécurisation et chiffrement du profil', detail: 'Application du PIN de session et des clés locales...' },
@@ -83,7 +83,7 @@ export const SetupWizard = () => {
   // Step 4 progress simulation
   useEffect(() => {
     if (step === 4) {
-      setTerminalLogs(['[INIT] Démarrage de l\'installeur FloraOS v2.6.0...']);
+      setTerminalLogs(['[INIT] Démarrage de l\'installeur FloraOS v0.2.0-bêta...']);
       let currentProg = 0;
       let moduleIdx = 0;
 
@@ -252,7 +252,7 @@ export const SetupWizard = () => {
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em' }}>
-                FloraOS <span style={{ fontSize: '11px', fontWeight: 500, color: '#94a3b8', marginLeft: '4px' }}>2.6 Pro</span>
+                FloraOS <span style={{ fontSize: '11px', fontWeight: 600, color: '#34d399', marginLeft: '4px' }}>0.2 Bêta</span>
               </div>
               <div style={{ fontSize: '11px', color: '#64748b' }}>
                 Assistant d'installation

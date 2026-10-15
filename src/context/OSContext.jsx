@@ -8,8 +8,8 @@ import { getAssetPath } from '../utils/paths';
 
 const OSContext = createContext(null);
 
-export const CURRENT_FLORA_VERSION = '1.2.0';
-export const FLORA_CODENAME = 'Evergreen Edition';
+export const CURRENT_FLORA_VERSION = '0.2.0';
+export const FLORA_CODENAME = 'Bêta 0.2';
 
 const parseSemVer = (str = '') => {
   const clean = String(str).replace(/^[^\d]*/i, '').trim();

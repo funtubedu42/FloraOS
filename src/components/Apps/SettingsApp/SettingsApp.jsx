@@ -1545,7 +1545,7 @@ export const SettingsApp = () => {
                   <div style={{ fontSize: '12px', color: '#94a3b8' }}>
                     {updateState.hasUpdate 
                       ? `${updateState.releaseName || 'FloraOS Update'} • Publié le ${updateState.releaseDate || 'récemment'}`
-                      : `Version actuelle : FloraOS v${CURRENT_FLORA_VERSION || '1.2.0'} (${FLORA_CODENAME || 'Evergreen Edition'})`}
+                      : `Version actuelle : FloraOS v${CURRENT_FLORA_VERSION || '0.2.0'} (${FLORA_CODENAME || 'Bêta 0.2'})`}
                   </div>
                 </div>
 
@@ -1780,7 +1780,7 @@ export const SettingsApp = () => {
               FloraOS Web
             </h1>
             <p style={{ fontSize: '13px', color: '#34d399', fontWeight: 600, marginBottom: '14px' }}>
-              Version {CURRENT_FLORA_VERSION || '1.2.0'} ({FLORA_CODENAME || 'Evergreen Edition'})
+              Version {CURRENT_FLORA_VERSION || '0.2.0'} ({FLORA_CODENAME || 'Bêta 0.2'})
             </p>
 
             <button

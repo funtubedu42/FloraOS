@@ -1,7 +1,7 @@
 {
-  "version": "1.2.0",
-  "name": "FloraOS Evergreen Edition",
-  "build": "20261015.1",
+  "version": "0.2.0",
+  "name": "FloraOS Bêta 0.2",
+  "build": "20261016.beta",
   "releaseDate": "15 Octobre 2026",
   "githubRepo": "funtubedu42/FloraOS",
   "changelog": [
