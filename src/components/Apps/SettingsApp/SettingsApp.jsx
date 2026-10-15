@@ -64,8 +64,7 @@ export const SettingsApp = () => {
     FLORA_CODENAME,
     updateState,
     checkForUpdates,
-    installSystemUpdate,
-    simulateUpdateAvailable
+    installSystemUpdate
   } = useOS();
 
   const [activeTab, setActiveTab] = useState('wallpapers');
@@ -1673,76 +1672,31 @@ export const SettingsApp = () => {
                 </label>
               </div>
 
-              {/* GitHub Repository Link */}
-              <div>
-                <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#f1f5f9', marginBottom: '4px' }}>
-                  Dépôt GitHub Releases (optionnel)
-                </div>
-                <div style={{ fontSize: '11.5px', color: '#94a3b8', marginBottom: '8px' }}>
-                  Indiquez votre dépôt (ex: <code>pseudo/FloraOS</code>). FloraOS vérifiera directement les Releases publiques sur GitHub !
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    type="text"
-                    value={settings.githubRepo || ''}
-                    onChange={(e) => setSettings(prev => ({ ...prev, githubRepo: e.target.value }))}
-                    placeholder="ex: funtubedu42/FloraOS"
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      background: 'rgba(0, 0, 0, 0.25)',
-                      color: '#fff',
-                      fontSize: '12px',
-                      outline: 'none'
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      notify('Paramètres', 'Dépôt GitHub enregistré pour les mises à jour.', 'Check');
-                      checkForUpdates(true);
-                    }}
-                    style={{
-                      padding: '8px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      color: '#fff',
-                      fontSize: '11.5px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Tester
-                  </button>
-                </div>
-              </div>
-
-              {/* Demonstration Simulation Button */}
+              {/* Official Distribution Channel Info */}
               <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#f1f5f9' }}>
-                    Tester l'expérience de mise à jour (Simulation)
+                  <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#f1f5f9' }}>
+                    Canal de distribution officiel
                   </div>
-                  <div style={{ fontSize: '11px', color: '#64748b' }}>
-                    Déclenche l'alerte toast et affiche les notes de version de FloraOS v1.3.0.
+                  <div style={{ fontSize: '11.5px', color: '#94a3b8', marginTop: '2px' }}>
+                    Synchronisé automatiquement avec le serveur GitHub Releases officiel.
                   </div>
                 </div>
-                <button
-                  onClick={simulateUpdateAvailable}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    background: 'rgba(56, 189, 248, 0.1)',
-                    color: '#38bdf8',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                >
-                  Simuler v1.3.0
-                </button>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 10px',
+                  borderRadius: '20px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  fontSize: '11px',
+                  color: '#34d399',
+                  fontWeight: 600
+                }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+                  Canal Bêta & Stable
+                </div>
               </div>
             </div>
           </div>

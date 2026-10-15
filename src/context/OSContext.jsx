@@ -338,33 +338,31 @@ export const OSProvider = ({ children }) => {
     let source = 'local';
 
     try {
-      // 1. Tenter l'API GitHub Releases si un dépôt GitHub est configuré
-      const repo = settings.githubRepo?.trim();
+      // 1. Tenter l'API GitHub Releases sur le dépôt officiel
+      const repo = 'funtubedu42/FloraOS';
       let ghSuccess = false;
-      if (repo && repo.includes('/')) {
-        try {
-          const ghRes = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { cache: 'no-store' });
-          if (ghRes.ok) {
-            const data = await ghRes.json();
-            const tag = (data.tag_name || '').replace(/^v/i, '');
-            if (tag) {
-              ghSuccess = true;
-              source = 'github';
-              newVersion = tag;
-              releaseName = data.name || `FloraOS v${tag}`;
-              releaseDate = data.published_at ? new Date(data.published_at).toLocaleDateString('fr-FR') : 'Récent';
-              changelog = data.body ? data.body.split('\n').filter(l => l.trim().length > 0) : [];
-            }
+      try {
+        const ghRes = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { cache: 'no-store' });
+        if (ghRes.ok) {
+          const data = await ghRes.json();
+          const tag = (data.tag_name || '').replace(/^v/i, '');
+          if (tag) {
+            ghSuccess = true;
+            source = 'github';
+            newVersion = tag;
+            releaseName = data.name || `FloraOS v${tag}`;
+            releaseDate = data.published_at ? new Date(data.published_at).toLocaleDateString('fr-FR') : 'Récent';
+            changelog = data.body ? data.body.split('\n').filter(l => l.trim().length > 0) : [];
           }
-        } catch (e) {
-          console.warn('GitHub API check failed', e);
         }
+      } catch (e) {
+        console.warn('GitHub API check failed', e);
       }
 
-      // 2. Si pas de GitHub ou échec, vérifier le fichier local version.json du site
+      // 2. Si pas de GitHub ou échec réseau, vérifier le fichier local version.json du site
       if (!ghSuccess) {
         try {
-          const localRes = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
+          const localRes = await fetch(getAssetPath(`/version.json?t=${Date.now()}`), { cache: 'no-store' });
           if (localRes.ok) {
             const data = await localRes.json();
             if (data.version) {
@@ -428,33 +426,7 @@ export const OSProvider = ({ children }) => {
       console.error('Update check error', err);
       setUpdateState(prev => ({ ...prev, isChecking: false, lastChecked: Date.now() }));
     }
-  }, [settings.githubRepo, playSuccessSound]);
-
-  const simulateUpdateAvailable = useCallback(() => {
-    playNotificationSound();
-    setUpdateState({
-      currentVersion: CURRENT_FLORA_VERSION,
-      latestVersion: '1.3.0',
-      hasUpdate: true,
-      isChecking: false,
-      lastChecked: Date.now(),
-      releaseName: 'FloraOS Sequoia Update 1.3',
-      releaseDate: 'Disponible dès maintenant',
-      changelog: [
-        'Nouveau gestionnaire de widgets et d\'accessoires de bureau',
-        'Accélération matérielle des fenêtres avec effets de flou optimisés',
-        'Gestion multi-écrans et mise en veille programmable',
-        'Correctifs de sécurité du noyau et du système de fichiers VFS'
-      ],
-      source: 'simulation'
-    });
-    notify(
-      'Mise à jour système disponible',
-      'FloraOS v1.3.0 (Sequoia) est prête. Cliquez pour ouvrir les Paramètres et installer.',
-      '/apps/os_icon.png',
-      () => openApp('settings')
-    );
-  }, [playNotificationSound]);
+  }, [playSuccessSound]);
 
   const installSystemUpdate = useCallback(() => {
     setUpdateModal({
@@ -1890,8 +1862,7 @@ export const OSProvider = ({ children }) => {
         setUpdateState,
         updateModal,
         checkForUpdates,
-        installSystemUpdate,
-        simulateUpdateAvailable
+        installSystemUpdate
       }}
     >
       {children}
