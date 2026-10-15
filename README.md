@@ -1,5 +1,8 @@
 # 🌿 FloraOS — Système d'Exploitation Web Moderne
 
+>[!NOTE]
+>FloraOS est encore en développement et en version bêta, certain bug peuvent encore survenir et certaine fonctionnalité peuvent être manquante
+
 **FloraOS** est un environnement de bureau virtuel et système d'exploitation web interactif développé avec **React 19** et **Vite**. Il offre une expérience moderne inspirée des systèmes Linux et Unix récents (Zorin OS, GNOME) directement dans votre navigateur web.
 
 ---
@@ -28,31 +31,8 @@
 
 ---
 
-## 🚀 Démarrage Rapide
-
-### Prérequis
-- [Node.js](https://nodejs.org/) (version 20 ou supérieure recommandée)
-- npm ou pnpm
-
-### Installation et Lancement
-```bash
-# Cloner le dépôt
-git clone https://github.com/VOTRE-PSEUDO/FloraOS.git
-cd FloraOS
-
-# Installer les dépendances
-npm install
-
-# Lancer le serveur de développement local
-npm run dev
-```
-Ouvrez votre navigateur sur `http://localhost:5173`.
-
-### Compilation pour la Production
-```bash
-npm run build
-```
-Les fichiers compilés et optimisés seront générés dans le dossier `dist/`.
+## Comment l'utiliser ?
+Allez directement sur https://funtubedu42.github.io/FloraOS/ et tester le site par vous même !
 
 ---
 
