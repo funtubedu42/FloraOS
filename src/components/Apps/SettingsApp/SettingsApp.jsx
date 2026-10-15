@@ -60,6 +60,8 @@ export const SettingsApp = () => {
     resetToFactory,
     reorganizeDesktopIcons,
     notify,
+    exportSystemBackup,
+    importSystemBackup,
     CURRENT_FLORA_VERSION,
     FLORA_CODENAME,
     updateState,
@@ -1453,6 +1455,52 @@ export const SettingsApp = () => {
                 >
                   <Trash2 size={14} /> Purger la corbeille
                 </button>
+              </div>
+
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
+
+              {/* Sauvegarde & Restauration */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: '13.5px', fontWeight: 600, color: '#38bdf8' }}>Sauvegarde du système</div>
+                  <div style={{ fontSize: '11.5px', color: '#94a3b8' }}>Exporte ou restaure l'ensemble de vos fichiers, réglages et profils</div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={exportSystemBackup}
+                    className="flora-btn flora-btn-secondary"
+                    style={{ height: '34px' }}
+                  >
+                    <Download size={14} /> Exporter (.json)
+                  </button>
+
+                  <label
+                    className="flora-btn flora-btn-secondary"
+                    style={{ height: '34px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <Upload size={14} /> Restaurer
+                    <input
+                      type="file"
+                      accept=".json"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            const content = evt.target?.result;
+                            if (typeof content === 'string') {
+                              importSystemBackup(content);
+                            }
+                          };
+                          reader.readAsText(file);
+                        }
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
 
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />

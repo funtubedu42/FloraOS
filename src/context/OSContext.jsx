@@ -8,8 +8,8 @@ import { getAssetPath } from '../utils/paths';
 
 const OSContext = createContext(null);
 
-export const CURRENT_FLORA_VERSION = '0.2.0';
-export const FLORA_CODENAME = 'Bêta 0.2';
+export const CURRENT_FLORA_VERSION = '0.3.0';
+export const FLORA_CODENAME = 'Bêta 0.3';
 
 const parseSemVer = (str = '') => {
   const clean = String(str).replace(/^[^\d]*/i, '').trim();
@@ -966,6 +966,49 @@ export const OSProvider = ({ children }) => {
     setWindows(prev => prev.map(w => w.id === id ? { ...w, size: newSize, isMaximized: false } : w));
   };
 
+  const snapWindow = (id, snapType) => {
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const taskbarHeight = 48;
+
+    setWindows(prev => prev.map(w => {
+      if (w.id !== id) return w;
+      if (snapType === 'left') {
+        return {
+          ...w,
+          isMaximized: false,
+          snapped: 'left',
+          prevPosition: w.snapped ? w.prevPosition : { ...w.position },
+          prevSize: w.snapped ? w.prevSize : { ...w.size },
+          position: { x: 0, y: 0 },
+          size: { width: Math.floor(screenWidth / 2), height: screenHeight - taskbarHeight }
+        };
+      } else if (snapType === 'right') {
+        return {
+          ...w,
+          isMaximized: false,
+          snapped: 'right',
+          prevPosition: w.snapped ? w.prevPosition : { ...w.position },
+          prevSize: w.snapped ? w.prevSize : { ...w.size },
+          position: { x: Math.floor(screenWidth / 2), y: 0 },
+          size: { width: Math.ceil(screenWidth / 2), height: screenHeight - taskbarHeight }
+        };
+      } else if (snapType === 'top') {
+        return {
+          ...w,
+          isMaximized: true,
+          snapped: null,
+          prevPosition: w.snapped ? w.prevPosition : { ...w.position },
+          prevSize: w.snapped ? w.prevSize : { ...w.size },
+          position: { x: 0, y: 0 },
+          size: { width: screenWidth, height: screenHeight - taskbarHeight }
+        };
+      }
+      return w;
+    }));
+    focusWindow(id);
+  };
+
   // User-Isolated Desktop Resolution
   const getActiveDesktopId = useCallback(() => {
     const userDesktop = `desktop_${activeUserId}`;
@@ -1534,6 +1577,117 @@ export const OSProvider = ({ children }) => {
     playClickSound();
   };
 
+  const restoreFromTrash = (id) => {
+    if (!id || !fileSystem[id]) return;
+    const node = fileSystem[id];
+    if (node.parentId !== 'trash') return;
+
+    let targetParentId = node.oldParentId;
+    if (!targetParentId || !fileSystem[targetParentId]) {
+      targetParentId = getActiveDesktopId();
+    }
+
+    setFileSystem(prev => {
+      const next = { ...prev };
+      if (next.trash) {
+        next.trash = {
+          ...next.trash,
+          children: (next.trash.children || []).filter(cid => cid !== id)
+        };
+      }
+      if (next[targetParentId]) {
+        const curChildren = next[targetParentId].children || [];
+        next[targetParentId] = {
+          ...next[targetParentId],
+          children: curChildren.includes(id) ? curChildren : [...curChildren, id]
+        };
+      }
+      next[id] = {
+        ...node,
+        parentId: targetParentId,
+        oldParentId: null
+      };
+      return next;
+    });
+
+    playSuccessSound();
+    notify('Corbeille', `« ${node.name} » a été restauré.`, '/apps/folder.png');
+  };
+
+  const exportSystemBackup = () => {
+    try {
+      const backupData = {
+        system: 'FloraOS',
+        version: CURRENT_FLORA_VERSION,
+        timestamp: Date.now(),
+        fileSystem,
+        settings,
+        users,
+        activeUserId,
+        pinnedAppIds,
+        iconPositions: JSON.parse(localStorage.getItem(STORAGE_KEYS.ICON_POS) || '{}'),
+        postits: JSON.parse(localStorage.getItem('floraos_postits_v1') || '[]')
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().split('T')[0];
+      a.href = url;
+      a.download = `floraos_backup_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      playSuccessSound();
+      notify('Sauvegarde', 'Sauvegarde système exportée avec succès !', '/apps/disk.png');
+    } catch (e) {
+      console.error('Export backup error:', e);
+      notify('Erreur', "Échec de l'exportation de la sauvegarde.", 'warning');
+    }
+  };
+
+  const importSystemBackup = (jsonString) => {
+    try {
+      const data = JSON.parse(jsonString);
+      if (!data.fileSystem || !data.settings) {
+        throw new Error('Fichier de sauvegarde invalide');
+      }
+
+      setFileSystem(data.fileSystem);
+      setSettings(data.settings);
+      if (Array.isArray(data.users) && data.users.length > 0) {
+        setUsers(data.users);
+      }
+      if (data.activeUserId) {
+        setActiveUserId(data.activeUserId);
+      }
+      if (Array.isArray(data.pinnedAppIds)) {
+        setPinnedAppIds(data.pinnedAppIds);
+      }
+      if (data.iconPositions) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.ICON_POS, JSON.stringify(data.iconPositions));
+        } catch {}
+      }
+      if (data.postits) {
+        try {
+          localStorage.setItem('floraos_postits_v1', JSON.stringify(data.postits));
+        } catch {}
+      }
+
+      playSuccessSound();
+      notify('Sauvegarde restaurée', 'Toutes vos données et configurations ont été restaurées.', '/apps/disk.png');
+      return true;
+    } catch (e) {
+      console.error('Import backup error:', e);
+      notify('Erreur de restauration', 'Format de fichier corrompu ou invalide.', 'warning');
+      return false;
+    }
+  };
+
   const saveFileContent = (id, newContent) => {
     if (!fileSystem[id]) return;
     if (isProtectedSystemNode(fileSystem[id])) {
@@ -1764,6 +1918,9 @@ export const OSProvider = ({ children }) => {
         renameNode,
         deleteNode,
         emptyTrash,
+        restoreFromTrash,
+        exportSystemBackup,
+        importSystemBackup,
         saveFileContent,
         uploadRealFile,
         downloadNodeFile,
@@ -1799,6 +1956,7 @@ export const OSProvider = ({ children }) => {
         focusWindow,
         updateWindowPosition,
         updateWindowSize,
+        snapWindow,
 
         // Menus & Drawers
         isStartMenuOpen,

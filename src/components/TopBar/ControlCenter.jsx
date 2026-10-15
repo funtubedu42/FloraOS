@@ -1,17 +1,50 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useOS } from '../../context/OSContext';
 import {
   Sun,
   Moon,
   Volume2,
+  VolumeX,
   Wifi,
   Lock,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Bluetooth,
+  BellOff,
+  Bell,
+  Maximize2,
+  Minimize2,
+  Battery,
+  BatteryCharging,
+  Sparkles
 } from 'lucide-react';
 
 export const ControlCenter = ({ isOpen, onClose }) => {
-  const { settings, setSettings, lockSession, openApp } = useOS();
+  const { settings, setSettings, lockSession, openApp, playClickSound } = useOS();
   const panelRef = useRef(null);
+
+  const [batteryLevel, setBatteryLevel] = useState(100);
+  const [isCharging, setIsCharging] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
+  const [bluetoothActive, setBluetoothActive] = useState(true);
+  const [wifiActive, setWifiActive] = useState(true);
+  const [dndActive, setDndActive] = useState(false);
+
+  useEffect(() => {
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(battery => {
+        setBatteryLevel(Math.round(battery.level * 100));
+        setIsCharging(battery.charging);
+        battery.addEventListener('levelchange', () => setBatteryLevel(Math.round(battery.level * 100)));
+        battery.addEventListener('chargingchange', () => setIsCharging(battery.charging));
+      }).catch(() => {});
+    }
+
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -28,10 +61,28 @@ export const ControlCenter = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const toggleTheme = () => {
+    playClickSound();
     setSettings(prev => ({
       ...prev,
       theme: prev.theme === 'dark' ? 'light' : 'dark'
     }));
+  };
+
+  const toggleSoundEffects = () => {
+    playClickSound();
+    setSettings(prev => ({
+      ...prev,
+      soundEffectsEnabled: prev.soundEffectsEnabled === false ? true : false
+    }));
+  };
+
+  const toggleFullscreen = () => {
+    playClickSound();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
   };
 
   return (
@@ -41,38 +92,87 @@ export const ControlCenter = ({ isOpen, onClose }) => {
         position: 'fixed',
         bottom: '58px',
         right: '12px',
-        width: '290px',
-        background: 'rgba(18, 24, 38, 0.92)',
-        backdropFilter: 'blur(32px)',
-        WebkitBackdropFilter: 'blur(32px)',
+        width: '320px',
+        background: 'rgba(15, 23, 42, 0.92)',
+        backdropFilter: 'blur(36px)',
+        WebkitBackdropFilter: 'blur(36px)',
         border: '1px solid rgba(255, 255, 255, 0.12)',
-        borderRadius: '16px',
-        padding: '14px',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.4)',
+        borderRadius: '20px',
+        padding: '16px',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.55)',
         zIndex: 10000,
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '14px',
         color: '#fff',
         animation: 'fadeIn 0.15s ease'
       }}
     >
-      {/* Quick Action Tiles */}
+      {/* Header Info: User / Battery */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#f8fafc' }}>
+          <Sparkles size={14} color="var(--accent-color, #38bdf8)" />
+          <span>Centre de Contrôle</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#94a3b8' }}>
+          {isCharging ? <BatteryCharging size={14} color="#10b981" /> : <Battery size={14} color="#38bdf8" />}
+          <span>{batteryLevel}%</span>
+        </div>
+      </div>
+
+      {/* Quick Action Tiles (Grid 2x2 or 3x2) */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
         {/* Wifi tile */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.06)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '12px',
-          padding: '10px 12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <Wifi size={15} color="var(--accent-color)" />
+        <div
+          onClick={() => {
+            playClickSound();
+            setWifiActive(prev => !prev);
+          }}
+          style={{
+            background: wifiActive ? 'rgba(56, 189, 248, 0.16)' : 'rgba(255, 255, 255, 0.05)',
+            border: wifiActive ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '10px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <Wifi size={16} color={wifiActive ? '#38bdf8' : '#64748b'} />
           <div>
             <div style={{ fontSize: '11.5px', fontWeight: 600 }}>Wi-Fi</div>
-            <div style={{ fontSize: '10px', color: '#94a3b8' }}>Connecté</div>
+            <div style={{ fontSize: '10px', color: wifiActive ? '#94a3b8' : '#64748b' }}>
+              {wifiActive ? 'Connecté' : 'Désactivé'}
+            </div>
+          </div>
+        </div>
+
+        {/* Bluetooth tile */}
+        <div
+          onClick={() => {
+            playClickSound();
+            setBluetoothActive(prev => !prev);
+          }}
+          style={{
+            background: bluetoothActive ? 'rgba(56, 189, 248, 0.16)' : 'rgba(255, 255, 255, 0.05)',
+            border: bluetoothActive ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '10px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <Bluetooth size={16} color={bluetoothActive ? '#38bdf8' : '#64748b'} />
+          <div>
+            <div style={{ fontSize: '11.5px', fontWeight: 600 }}>Bluetooth</div>
+            <div style={{ fontSize: '10px', color: bluetoothActive ? '#94a3b8' : '#64748b' }}>
+              {bluetoothActive ? 'Activé' : 'Désactivé'}
+            </div>
           </div>
         </div>
 
@@ -80,17 +180,18 @@ export const ControlCenter = ({ isOpen, onClose }) => {
         <div
           onClick={toggleTheme}
           style={{
-            background: 'rgba(255, 255, 255, 0.06)',
+            background: 'rgba(255, 255, 255, 0.05)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
+            borderRadius: '14px',
             padding: '10px 12px',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
           }}
         >
-          {settings.theme === 'dark' ? <Moon size={15} color="#cbd5e1" /> : <Sun size={15} color="#f59e0b" />}
+          {settings.theme === 'dark' ? <Moon size={16} color="#a5b4fc" /> : <Sun size={16} color="#f59e0b" />}
           <div>
             <div style={{ fontSize: '11.5px', fontWeight: 600 }}>Thème</div>
             <div style={{ fontSize: '10px', color: '#94a3b8' }}>
@@ -98,43 +199,67 @@ export const ControlCenter = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
+
+        {/* Fullscreen tile */}
+        <div
+          onClick={toggleFullscreen}
+          style={{
+            background: isFullscreen ? 'rgba(16, 185, 129, 0.16)' : 'rgba(255, 255, 255, 0.05)',
+            border: isFullscreen ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '10px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          {isFullscreen ? <Minimize2 size={16} color="#10b981" /> : <Maximize2 size={16} color="#cbd5e1" />}
+          <div>
+            <div style={{ fontSize: '11.5px', fontWeight: 600 }}>Plein Écran</div>
+            <div style={{ fontSize: '10px', color: isFullscreen ? '#34d399' : '#94a3b8' }}>
+              {isFullscreen ? 'Actif' : 'Fenêtré'}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Sliders */}
+      {/* Sliders: Luminosité & Volume */}
       <div style={{
         background: 'rgba(255, 255, 255, 0.04)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        padding: '10px 12px',
+        borderRadius: '14px',
+        padding: '12px 14px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px'
+        gap: '12px'
       }}>
         {/* Luminosité */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginBottom: '4px', color: '#cbd5e1' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Sun size={12} color="#f59e0b" /> Luminosité
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '5px', color: '#cbd5e1' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Sun size={13} color="#f59e0b" /> Luminosité
             </span>
-            <span>{settings.brightness}%</span>
+            <span style={{ fontWeight: 600 }}>{settings.brightness}%</span>
           </div>
           <input
             type="range"
-            min="30"
+            min="20"
             max="100"
             value={settings.brightness}
             onChange={(e) => setSettings(prev => ({ ...prev, brightness: Number(e.target.value) }))}
-            style={{ width: '100%', accentColor: 'var(--accent-color)', cursor: 'pointer' }}
+            style={{ width: '100%', accentColor: 'var(--accent-color, #38bdf8)', cursor: 'pointer' }}
           />
         </div>
 
         {/* Volume */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginBottom: '4px', color: '#cbd5e1' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Volume2 size={12} color="#38bdf8" /> Volume
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '5px', color: '#cbd5e1' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              {settings.soundVolume === 0 ? <VolumeX size={13} color="#ef4444" /> : <Volume2 size={13} color="#38bdf8" />} Volume
             </span>
-            <span>{settings.soundVolume}%</span>
+            <span style={{ fontWeight: 600 }}>{settings.soundVolume}%</span>
           </div>
           <input
             type="range"
@@ -142,7 +267,7 @@ export const ControlCenter = ({ isOpen, onClose }) => {
             max="100"
             value={settings.soundVolume}
             onChange={(e) => setSettings(prev => ({ ...prev, soundVolume: Number(e.target.value) }))}
-            style={{ width: '100%', accentColor: 'var(--accent-color)', cursor: 'pointer' }}
+            style={{ width: '100%', accentColor: 'var(--accent-color, #38bdf8)', cursor: 'pointer' }}
           />
         </div>
       </div>
@@ -156,12 +281,12 @@ export const ControlCenter = ({ isOpen, onClose }) => {
           }}
           style={{
             flex: 1,
-            padding: '7px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255,255,255,0.12)',
-            background: 'rgba(255,255,255,0.06)',
+            padding: '8px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            background: 'rgba(255, 255, 255, 0.06)',
             color: '#fff',
-            fontSize: '11px',
+            fontSize: '11.5px',
             fontWeight: 500,
             cursor: 'pointer',
             display: 'flex',
@@ -170,7 +295,7 @@ export const ControlCenter = ({ isOpen, onClose }) => {
             gap: '6px'
           }}
         >
-          <Lock size={12} /> Verrouiller
+          <Lock size={13} /> Verrouiller
         </button>
 
         <button
@@ -180,12 +305,12 @@ export const ControlCenter = ({ isOpen, onClose }) => {
           }}
           style={{
             flex: 1,
-            padding: '7px',
-            borderRadius: '8px',
+            padding: '8px',
+            borderRadius: '10px',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             background: 'rgba(255, 255, 255, 0.06)',
             color: '#fff',
-            fontSize: '11px',
+            fontSize: '11.5px',
             fontWeight: 500,
             cursor: 'pointer',
             display: 'flex',
@@ -194,7 +319,7 @@ export const ControlCenter = ({ isOpen, onClose }) => {
             gap: '6px'
           }}
         >
-          <SettingsIcon size={12} /> Paramètres
+          <SettingsIcon size={13} /> Paramètres
         </button>
       </div>
     </div>

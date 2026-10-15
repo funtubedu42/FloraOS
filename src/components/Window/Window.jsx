@@ -13,6 +13,9 @@ import { FloraStore } from '../Apps/FloraStore/FloraStore';
 import { TimeApp } from '../Apps/TimeApp/TimeApp';
 import { CalendarApp } from '../Apps/CalendarApp/CalendarApp';
 import { BrowserApp } from '../Apps/BrowserApp/BrowserApp';
+import { FloraPaint } from '../Apps/FloraPaint/FloraPaint';
+import { PostItApp } from '../Apps/PostItApp/PostItApp';
+import { SnakeApp } from '../Apps/SnakeApp/SnakeApp';
 import { Minus, Square, Copy, X } from 'lucide-react';
 import { playWarningSound } from '../../utils/audio';
 import { getAssetPath } from '../../utils/paths';
@@ -29,7 +32,10 @@ const APP_COMPONENTS = {
   terminal: Terminal,
   time: TimeApp,
   calendar: CalendarApp,
-  browser: BrowserApp
+  browser: BrowserApp,
+  paint: FloraPaint,
+  postit: PostItApp,
+  snake: SnakeApp
 };
 
 export const Window = ({ windowData }) => {
@@ -40,7 +46,8 @@ export const Window = ({ windowData }) => {
     minimizeWindow,
     maximizeWindow,
     updateWindowPosition,
-    updateWindowSize
+    updateWindowSize,
+    snapWindow
   } = useOS();
 
   const [unsavedModalOpen, setUnsavedModalOpen] = useState(false);
@@ -75,6 +82,8 @@ export const Window = ({ windowData }) => {
 
   const isDragging = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
+  const [snapPreview, setSnapPreview] = useState(null);
+  const snapPreviewRef = useRef(null);
 
   const isResizing = useRef(false);
   const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0 });
@@ -118,6 +127,21 @@ export const Window = ({ windowData }) => {
         const newX = Math.max(-windowData.size.width + 100, Math.min(e.clientX - dragOffset.current.x, screenW - 100));
         const newY = Math.max(32, Math.min(e.clientY - dragOffset.current.y, screenH - 100));
         updateWindowPosition(windowData.id, { x: newX, y: newY });
+
+        // Aero Snap edge detection
+        let targetSnap = null;
+        if (e.clientY <= 12) {
+          targetSnap = 'top';
+        } else if (e.clientX <= 16) {
+          targetSnap = 'left';
+        } else if (e.clientX >= screenW - 16) {
+          targetSnap = 'right';
+        }
+
+        if (snapPreviewRef.current !== targetSnap) {
+          snapPreviewRef.current = targetSnap;
+          setSnapPreview(targetSnap);
+        }
       }
 
       if (isResizing.current) {
@@ -130,8 +154,13 @@ export const Window = ({ windowData }) => {
     };
 
     const handleMouseUp = () => {
+      if (isDragging.current && snapPreviewRef.current) {
+        snapWindow(windowData.id, snapPreviewRef.current);
+      }
       isDragging.current = false;
       isResizing.current = false;
+      snapPreviewRef.current = null;
+      setSnapPreview(null);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -140,26 +169,62 @@ export const Window = ({ windowData }) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [windowData.id, windowData.size, updateWindowPosition, updateWindowSize]);
+  }, [windowData.id, windowData.size, updateWindowPosition, updateWindowSize, snapWindow]);
 
   const AppComponent = APP_COMPONENTS[windowData.appId] || FileExplorer;
 
   return (
-    <div
-      className={`flora-window ${isActive ? 'active' : ''} ${windowData.isMinimized ? 'minimized' : ''} ${windowData.isMaximized ? 'maximized' : ''}`}
-      style={{
-        left: windowData.isMaximized ? 0 : `${windowData.position.x}px`,
-        top: windowData.isMaximized ? 0 : `${windowData.position.y}px`,
-        width: windowData.isMaximized ? '100vw' : `${windowData.size.width}px`,
-        height: windowData.isMaximized ? 'calc(100vh - 48px)' : `${windowData.size.height}px`,
-        borderRadius: windowData.isMaximized ? 0 : undefined,
-        border: windowData.isMaximized ? 'none' : undefined,
-        boxShadow: windowData.isMaximized ? 'none' : undefined,
-        zIndex: windowData.zIndex,
-        transition: isDragging.current || isResizing.current ? 'none' : 'transform 0.16s ease, width 0.16s ease, height 0.16s ease, top 0.16s ease, left 0.16s ease'
-      }}
-      onPointerDown={() => focusWindow(windowData.id)}
-    >
+    <>
+      {/* Aero Snap Ghost Preview Overlay */}
+      {snapPreview && isDragging.current && (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 9990,
+            pointerEvents: 'none',
+            transition: 'all 0.15s cubic-bezier(0.2, 0.9, 0.4, 1)',
+            borderRadius: '16px',
+            background: 'rgba(56, 189, 248, 0.16)',
+            border: '2px solid rgba(56, 189, 248, 0.5)',
+            boxShadow: '0 8px 32px rgba(56, 189, 248, 0.25)',
+            backdropFilter: 'blur(8px)',
+            ...(snapPreview === 'left' && {
+              top: '8px',
+              left: '8px',
+              width: 'calc(50vw - 12px)',
+              height: 'calc(100vh - 64px)'
+            }),
+            ...(snapPreview === 'right' && {
+              top: '8px',
+              left: 'calc(50vw + 4px)',
+              width: 'calc(50vw - 12px)',
+              height: 'calc(100vh - 64px)'
+            }),
+            ...(snapPreview === 'top' && {
+              top: '8px',
+              left: '8px',
+              width: 'calc(100vw - 16px)',
+              height: 'calc(100vh - 64px)'
+            })
+          }}
+        />
+      )}
+
+      <div
+        className={`flora-window ${isActive ? 'active' : ''} ${windowData.isMinimized ? 'minimized' : ''} ${windowData.isMaximized ? 'maximized' : ''}`}
+        style={{
+          left: windowData.isMaximized ? 0 : `${windowData.position.x}px`,
+          top: windowData.isMaximized ? 0 : `${windowData.position.y}px`,
+          width: windowData.isMaximized ? '100vw' : `${windowData.size.width}px`,
+          height: windowData.isMaximized ? 'calc(100vh - 48px)' : `${windowData.size.height}px`,
+          borderRadius: windowData.isMaximized ? 0 : undefined,
+          border: windowData.isMaximized ? 'none' : undefined,
+          boxShadow: windowData.isMaximized ? 'none' : undefined,
+          zIndex: windowData.zIndex,
+          transition: isDragging.current || isResizing.current ? 'none' : 'transform 0.16s ease, width 0.16s ease, height 0.16s ease, top 0.16s ease, left 0.16s ease'
+        }}
+        onPointerDown={() => focusWindow(windowData.id)}
+      >
       {/* Titlebar Header */}
       <div
         className="window-header"
@@ -525,5 +590,6 @@ export const Window = ({ windowData }) => {
         />
       )}
     </div>
-  );
+  </>
+);
 };

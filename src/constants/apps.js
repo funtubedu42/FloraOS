@@ -173,5 +173,47 @@ export const APPS = {
     isDockPinned: true,
     supportedExtensions: ['url', 'webloc', 'html', 'htm'],
     category: 'Internet'
+  },
+  paint: {
+    id: 'paint',
+    name: 'FloraPaint',
+    title: 'FloraPaint — Studio de Dessin',
+    icon: 'Paintbrush',
+    iconImg: getAssetPath('/apps/paint_app.png'),
+    color: '#ec4899',
+    defaultWidth: 920,
+    defaultHeight: 620,
+    minWidth: 640,
+    minHeight: 460,
+    isDockPinned: true,
+    category: 'Création'
+  },
+  postit: {
+    id: 'postit',
+    name: 'Notes & Post-it',
+    title: 'Notes & Post-it',
+    icon: 'StickyNote',
+    iconImg: getAssetPath('/apps/postit_app.png'),
+    color: '#f59e0b',
+    defaultWidth: 680,
+    defaultHeight: 520,
+    minWidth: 420,
+    minHeight: 340,
+    isDockPinned: true,
+    category: 'Productivité'
+  },
+  snake: {
+    id: 'snake',
+    name: 'FloraSnake',
+    title: 'FloraSnake — Jeu Arcade',
+    icon: 'Gamepad2',
+    iconImg: getAssetPath('/apps/snake_app.png'),
+    color: '#10b981',
+    defaultWidth: 450,
+    defaultHeight: 640,
+    minWidth: 420,
+    minHeight: 560,
+    isDockPinned: false,
+    category: 'Jeux'
   }
 };

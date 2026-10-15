@@ -1,0 +1,20 @@
+{
+  "name": "FloraOS — Système d'Exploitation Web",
+  "short_name": "FloraOS",
+  "description": "Système d'exploitation web moderne, fluide et élégant avec fenêtres, applications et système de fichiers.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "./apps/os_icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity", "entertainment"]
+}

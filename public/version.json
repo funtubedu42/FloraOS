@@ -1,14 +1,18 @@
 {
-  "version": "0.2.0",
-  "name": "FloraOS Bêta 0.2",
-  "build": "20261016.beta",
-  "releaseDate": "15 Octobre 2026",
+  "version": "0.3.0",
+  "name": "FloraOS Bêta 0.3",
+  "build": "20261016.beta03",
+  "releaseDate": "16 Octobre 2026",
   "githubRepo": "funtubedu42/FloraOS",
   "changelog": [
-    "Navigateur FloraWeb avec FloraTube (YouTube sans blocage) et FloraSearch",
-    "Système complet de mise à jour automatique et vérification manuelle",
-    "Support étendu des sons personnalisés dans /public/sounds",
-    "Amélioration de l'explorateur de fichiers et des raccourcis bureau",
-    "Gestion avancée du stockage et métriques matérielles dans les Paramètres"
+    "Système d'ancrage intelligent Aero Snap (bords gauche, droit et maximisation en haut)",
+    "Commutateur visuel d'applications Alt + Tab avec aperçu des fenêtres",
+    "Centre de contrôle rapide enrichi (Wi-Fi, Bluetooth, Thème, Plein écran, Luminosité, Volume)",
+    "Gestion complète de la Corbeille avec restauration vers l'emplacement d'origine",
+    "Sauvegarde et Restauration du système (.json) dans les Paramètres",
+    "Nouvelle application FloraPaint avec palette de dessin, formes et export PNG",
+    "Nouvelle application Notes & Post-it repositionnables avec palette de couleurs",
+    "Nouveau mini-jeu d'arcade FloraSnake avec bonus dorés, sons rétro et contrôles tactiles",
+    "Support de l'installation PWA (Progressive Web App) et Service Worker hors-ligne"
   ]
 }

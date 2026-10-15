@@ -17,7 +17,8 @@ import {
   Download,
   Info,
   Copy,
-  Check
+  Check,
+  RotateCcw
 } from 'lucide-react';
 import { useOS } from '../../../context/OSContext';
 import { DynamicIcon, getFileIconDetails } from '../../../utils/IconHelper';
@@ -34,6 +35,7 @@ export const FileExplorer = ({ windowData }) => {
     deleteNode,
     uploadRealFile,
     emptyTrash,
+    restoreFromTrash,
     openContextMenu,
     downloadNodeFile,
     playClickSound,
@@ -444,24 +446,49 @@ export const FileExplorer = ({ windowData }) => {
         {/* Action Buttons: New Folder, New File, Upload, Empty trash */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           {isTrash ? (
-            <button
-              onClick={emptyTrash}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                background: 'rgba(239, 68, 68, 0.2)',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                color: '#f87171',
-                padding: '5px 10px',
-                borderRadius: '8px',
-                fontSize: '11.5px',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              <Trash size={13} /> Vider
-            </button>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {selectedIds.length > 0 && (
+                <button
+                  onClick={() => {
+                    selectedIds.forEach(id => restoreFromTrash(id));
+                    setSelectedIds([]);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    color: '#34d399',
+                    padding: '5px 10px',
+                    borderRadius: '8px',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <RotateCcw size={13} /> Restaurer ({selectedIds.length})
+                </button>
+              )}
+              <button
+                onClick={emptyTrash}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#f87171',
+                  padding: '5px 10px',
+                  borderRadius: '8px',
+                  fontSize: '11.5px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                <Trash size={13} /> Vider
+              </button>
+            </div>
           ) : (
             <>
               <button

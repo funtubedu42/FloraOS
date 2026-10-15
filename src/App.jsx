@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { OSProvider, useOS } from './context/OSContext';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { Desktop } from './components/Desktop/Desktop';
@@ -14,6 +14,7 @@ import { RenameModal } from './components/Modals/RenameModal';
 import { PropertiesModal } from './components/Modals/PropertiesModal';
 import { CreateShortcutModal } from './components/Modals/CreateShortcutModal';
 import { SystemUpdateModal } from './components/Modals/SystemUpdateModal';
+import { AltTabSwitcher } from './components/Modals/AltTabSwitcher';
 import { getAssetPath } from './utils/paths';
 
 const OSContent = () => {
@@ -37,6 +38,9 @@ const OSContent = () => {
   } = useOS();
 
   const [isShortcutsHelperOpen, setIsShortcutsHelperOpen] = useState(false);
+  const [isAltTabOpen, setIsAltTabOpen] = useState(false);
+  const [altTabIndex, setAltTabIndex] = useState(0);
+  const altTabRef = useRef({ isOpen: false, index: 0, windows: [] });
 
   // Apply accent color and glass blur to root document
   useEffect(() => {
@@ -66,38 +70,69 @@ const OSContent = () => {
         ctrlOnlyPressed = false;
       }
 
-      // 1. Start Menu: Ctrl + Space or Ctrl + Escape
+      // 1. Super / Windows key to toggle Start Menu
+      if (e.key === 'Meta') {
+        e.preventDefault();
+        toggleStartMenu();
+        return;
+      }
+
+      // 2. Start Menu: Ctrl + Space or Ctrl + Escape
       if ((e.ctrlKey && e.code === 'Space') || (e.ctrlKey && e.key === 'Escape')) {
         e.preventDefault();
         toggleStartMenu();
         return;
       }
 
-      // 2. Escape closes start menu / shortcuts modal
+      // 3. Escape closes start menu / shortcuts modal / AltTab / context menu
       if (e.key === 'Escape') {
         setIsStartMenuOpen(false);
         setIsShortcutsHelperOpen(false);
+        setIsAltTabOpen(false);
+        altTabRef.current.isOpen = false;
+        closeContextMenu();
+        return;
+      }
+
+      // 4. Alt + Tab visual window cycling
+      if (e.altKey && e.key === 'Tab') {
+        e.preventDefault();
+        if (windows.length > 0) {
+          if (!altTabRef.current.isOpen) {
+            altTabRef.current.isOpen = true;
+            altTabRef.current.windows = [...windows];
+            const currentIdx = windows.findIndex(w => w.id === activeWindowId);
+            const nextIdx = (currentIdx + 1) % windows.length;
+            altTabRef.current.index = nextIdx;
+            setAltTabIndex(nextIdx);
+            setIsAltTabOpen(true);
+          } else {
+            const nextIdx = (altTabRef.current.index + 1) % altTabRef.current.windows.length;
+            altTabRef.current.index = nextIdx;
+            setAltTabIndex(nextIdx);
+          }
+        }
         return;
       }
 
       // If typing in input, don't trigger app launcher shortcuts
       if (isInput) return;
 
-      // 3. File Explorer: Ctrl + E
+      // 5. File Explorer: Ctrl + E
       if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'e') {
         e.preventDefault();
         openApp('explorer');
         return;
       }
 
-      // 4. Lock session: Ctrl + L
+      // 6. Lock session: Ctrl + L
       if (e.ctrlKey && e.key.toLowerCase() === 'l') {
         e.preventDefault();
         lockSession();
         return;
       }
 
-      // 5. Show Desktop: Ctrl + D (Minimizes all windows or restores them)
+      // 7. Show Desktop: Ctrl + D (Minimizes all windows or restores them)
       if (e.ctrlKey && e.key.toLowerCase() === 'd') {
         e.preventDefault();
         const hasOpen = windows.some(w => !w.isMinimized);
@@ -108,35 +143,35 @@ const OSContent = () => {
         return;
       }
 
-      // 6. Terminal: Ctrl + T or Ctrl + Shift + Esc
+      // 8. Terminal: Ctrl + T or Ctrl + Shift + Esc
       if ((e.ctrlKey && e.key.toLowerCase() === 't') || (e.ctrlKey && e.shiftKey && e.key === 'Escape')) {
         e.preventDefault();
         openApp('terminal');
         return;
       }
 
-      // 7. Settings: Ctrl + ,
+      // 9. Settings: Ctrl + ,
       if (e.ctrlKey && e.key === ',') {
         e.preventDefault();
         openApp('settings');
         return;
       }
 
-      // 8. FloraStore: Ctrl + K
+      // 10. FloraStore: Ctrl + K
       if (e.ctrlKey && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         openApp('store');
         return;
       }
 
-      // 9. New Folder on Desktop: Ctrl + Shift + N
+      // 11. New Folder on Desktop: Ctrl + Shift + N
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'n') {
         e.preventDefault();
         createFolder('desktop');
         return;
       }
 
-      // 10. Close active window: Alt + F4 or Ctrl + W
+      // 12. Close active window: Alt + F4 or Ctrl + W
       if ((e.altKey && e.key === 'F4') || (e.ctrlKey && e.key.toLowerCase() === 'w')) {
         if (activeWindowId) {
           e.preventDefault();
@@ -145,18 +180,7 @@ const OSContent = () => {
         return;
       }
 
-      // 11. Alt + Tab window cycling
-      if (e.altKey && e.key === 'Tab') {
-        e.preventDefault();
-        if (windows.length > 1) {
-          const currentIndex = windows.findIndex(w => w.id === activeWindowId);
-          const nextIndex = (currentIndex + 1) % windows.length;
-          focusWindow(windows[nextIndex].id);
-        }
-        return;
-      }
-
-      // 12. Show Keyboard Shortcuts Guide: Ctrl + /
+      // 13. Show Keyboard Shortcuts Guide: Ctrl + /
       if (e.ctrlKey && (e.key === '/' || e.key === '?')) {
         e.preventDefault();
         setIsShortcutsHelperOpen(prev => !prev);
@@ -165,6 +189,16 @@ const OSContent = () => {
     };
 
     const handleKeyUp = (e) => {
+      // When Alt is released, confirm Alt+Tab selection
+      if (e.key === 'Alt' && altTabRef.current.isOpen) {
+        const targetWin = altTabRef.current.windows[altTabRef.current.index];
+        if (targetWin) {
+          focusWindow(targetWin.id);
+        }
+        altTabRef.current.isOpen = false;
+        setIsAltTabOpen(false);
+      }
+
       // If user tapped and released Control alone, toggle Start Menu
       if (e.key === 'Control' && ctrlOnlyPressed) {
         const isInput = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
@@ -275,6 +309,18 @@ const OSContent = () => {
 
           {/* System Update Fullscreen Animation Dialog */}
           <SystemUpdateModal />
+
+          {/* Visual Alt + Tab Window Switcher */}
+          <AltTabSwitcher
+            isOpen={isAltTabOpen}
+            windows={windows}
+            selectedIndex={altTabIndex}
+            onSelectWindow={(id) => {
+              focusWindow(id);
+              altTabRef.current.isOpen = false;
+              setIsAltTabOpen(false);
+            }}
+          />
         </>
       )}
     </div>

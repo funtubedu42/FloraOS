@@ -13,9 +13,20 @@
   - Lecteur officiel YouTube intégré (*FloraTube*) sans refus de connexion ni blocage `X-Frame-Options`.
   - Moteur de recherche web en direct (*FloraSearch*) avec réponses instantanées et synthèses Wikipédia.
   - Gestion des onglets, favoris, raccourcis et ouverture externe.
-- **📁 Explorateur de fichiers & VFS persistant** :
+- **📁 Explorateur de fichiers, Corbeille & Sauvegardes** :
   - Système de fichiers complet (`Système`, `Pilotes`, `Configuration`, `Journaux`, `Applications`, `Utilisateurs`).
-  - Copie de chemin d'accès dans le fil d'Ariane, propriétés des fichiers et raccourcis dynamiques.
+  - Corbeille avec restauration automatique vers l'emplacement d'origine et vidage définitif.
+  - Exportation et restauration intégrale du système au format JSON (`.json`) dans les Paramètres.
+- **🪟 Gestion des Fenêtres & Raccourcis** :
+  - Système d'ancrage intelligent *Aero Snap* (bords latéraux 50% et plein écran au sommet avec prévisualisation ghost).
+  - Commutateur visuel d'applications `Alt + Tab` avec aperçus, touche `Super/Windows` et `Échap`.
+- **🎨 Applications intégrées & Création** :
+  - **FloraPaint** : studio de dessin avec pinceau, formes, gomme, palette et export direct sur le Bureau.
+  - **Notes & Post-it** : mémos colorés repositionnables avec auto-sauvegarde et export `.txt`.
+  - **FloraSnake** : mini-jeu d'arcade rétro avec pommes dorées, niveaux de vitesse et effets sonores 8-bit.
+- **⚡ Centre de Contrôle & Installation PWA** :
+  - Panneau rapide rétractable : curseurs luminosité/volume, Wi-Fi, Bluetooth, thème, plein écran, batterie.
+  - Support PWA (*Progressive Web App*) permettant d'installer FloraOS comme une vraie application sur PC et mobile.
 - **🔄 FloraUpdate (Gestionnaire de Mises à Jour)** :
   - Détection automatique et manuelle des nouvelles versions via *GitHub Releases* et `version.json`.
   - Notifications système toast cliquables et écran d'installation immersif avec redémarrage automatique.

@@ -24,7 +24,8 @@ import {
   Clipboard,
   Lock,
   Check,
-  Globe
+  Globe,
+  RotateCcw
 } from 'lucide-react';
 import { APPS } from '../../constants/apps';
 
@@ -40,6 +41,7 @@ export const ContextMenu = () => {
     openRenameModal,
     deleteNode,
     emptyTrash,
+    restoreFromTrash,
     downloadNodeFile,
     fileSystem,
     openApp,
@@ -244,6 +246,22 @@ export const ContextMenu = () => {
       {/* 2. File context */}
       {type === 'file' && targetNode && (
         <>
+          {targetNode.parentId === 'trash' && (
+            <>
+              <div
+                className="context-menu-item"
+                style={{ fontWeight: 600, color: '#34d399' }}
+                onClick={() => handleAction(() => restoreFromTrash(targetNode.id))}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RotateCcw size={15} color="#10b981" />
+                  Restaurer le fichier
+                </span>
+              </div>
+              <div className="context-menu-divider" />
+            </>
+          )}
+
           <div
             className="context-menu-item"
             style={{ fontWeight: 600 }}
@@ -403,6 +421,22 @@ export const ContextMenu = () => {
       {/* 3. Folder context */}
       {type === 'folder' && targetNode && (
         <>
+          {targetNode.parentId === 'trash' && (
+            <>
+              <div
+                className="context-menu-item"
+                style={{ fontWeight: 600, color: '#34d399' }}
+                onClick={() => handleAction(() => restoreFromTrash(targetNode.id))}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RotateCcw size={15} color="#10b981" />
+                  Restaurer le dossier
+                </span>
+              </div>
+              <div className="context-menu-divider" />
+            </>
+          )}
+
           <div
             className="context-menu-item"
             style={{ fontWeight: 600 }}
