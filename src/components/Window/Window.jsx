@@ -361,7 +361,7 @@ export const Window = ({ windowData }) => {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <img
-                    src="/apps/warning.png"
+                    src={getAssetPath('/apps/warning.png')}
                     alt=""
                     style={{ width: '16px', height: '16px', objectFit: 'contain' }}
                   />
@@ -435,7 +435,7 @@ export const Window = ({ windowData }) => {
               {/* Body */}
               <div style={{ padding: '20px 22px 18px', display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <img
-                  src="/apps/warning.png"
+                  src={getAssetPath('/apps/warning.png')}
                   alt="Avertissement"
                   draggable={false}
                   onDragStart={(e) => e.preventDefault()}

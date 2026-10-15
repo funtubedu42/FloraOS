@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOS } from '../../context/OSContext';
 import { ArrowRight } from 'lucide-react';
+import { getAssetPath } from '../../utils/paths';
 
 export const LockScreen = () => {
   const { user, users, switchUser, login, unlockSession, isLocked } = useOS();
@@ -38,7 +39,7 @@ export const LockScreen = () => {
     if (avatarSrc && (avatarSrc.startsWith('/') || avatarSrc.startsWith('http') || avatarSrc.includes('.'))) {
       return (
         <img
-          src={avatarSrc}
+          src={getAssetPath(avatarSrc)}
           alt="Avatar"
           style={{
             width: '100%',

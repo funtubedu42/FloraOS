@@ -38,7 +38,7 @@ Allez directement sur https://funtubedu42.github.io/FloraOS/ et tester le site p
 
 ## 📄 Licence & Propriété Intellectuelle
 
-**Copyright © 2026 Luca. Tous droits réservés.**
+**Copyright © 2026 Funtube. Tous droits réservés.**
 
 Ce projet est sous licence **Tous droits réservés (Propriétaire)**.  
 Il est formellement interdit de copier, dupliquer, cloner, redistribuer, modifier, republier ou commercialiser tout ou partie du code source, des interfaces, des assets graphiques et des ressources de ce projet sans autorisation écrite préalable et expresse de l'auteur.

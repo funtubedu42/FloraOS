@@ -24,9 +24,10 @@ import {
   Unlock
 } from 'lucide-react';
 import { playStartupSound, playClickSound, playWarningSound, playSuccessSound } from '../../utils/audio';
+import { getAssetPath } from '../../utils/paths';
 
 const AVATAR_OPTIONS = [
-  { id: 'real_user', src: '/apps/user.png', label: 'Flora' },
+  { id: 'real_user', src: getAssetPath('/apps/user.png'), label: 'Flora' },
   { id: 'emoji_leaf', emoji: '🌿', label: 'Feuille' },
   { id: 'emoji_fox', emoji: '🦊', label: 'Renard' },
   { id: 'emoji_gem', emoji: '💎', label: 'Diamant' },
@@ -46,7 +47,7 @@ export const SetupWizard = () => {
   const { completeInstallation } = useOS();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('Luca');
-  const [avatar, setAvatar] = useState('/apps/user.png');
+  const [avatar, setAvatar] = useState(getAssetPath('/apps/user.png'));
   const [hasPassword, setHasPassword] = useState(false);
   const [pin, setPin] = useState('');
   const [pinConfirm, setPinConfirm] = useState('');
@@ -239,7 +240,7 @@ export const SetupWizard = () => {
               overflow: 'hidden'
             }}>
               <img
-                src="/apps/os_icon.png"
+                src={getAssetPath('/apps/os_icon.png')}
                 alt="FloraOS"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
@@ -330,7 +331,7 @@ export const SetupWizard = () => {
               overflow: 'hidden'
             }}>
               <img
-                src="/apps/os_icon.png"
+                src={getAssetPath('/apps/os_icon.png')}
                 alt="FloraOS"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
@@ -583,8 +584,8 @@ export const SetupWizard = () => {
                   boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
                   flexShrink: 0
                 }}>
-                  {avatar.startsWith('/') ? (
-                    <img src={avatar} alt="avatar" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+                  {avatar.startsWith('/') || avatar.includes('/apps/') ? (
+                    <img src={getAssetPath(avatar)} alt="avatar" style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
                   ) : (
                     avatar
                   )}
@@ -630,7 +631,7 @@ export const SetupWizard = () => {
                         }}
                       >
                         {opt.src ? (
-                          <img src={opt.src} alt={opt.label} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
+                          <img src={getAssetPath(opt.src)} alt={opt.label} style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
                         ) : (
                           opt.emoji
                         )}

@@ -33,9 +33,10 @@ import {
 import { useOS } from '../../../context/OSContext';
 import { WALLPAPERS, ACCENT_COLORS } from '../../../constants/wallpapers';
 import { playSuccessSound, playWindowOpenSound, playWarningSound, playClickSound, playNotificationSound } from '../../../utils/audio';
+import { getAssetPath } from '../../../utils/paths';
 
 const AVATAR_OPTIONS = [
-  { id: 'real_user', src: '/apps/user.png', label: 'Flora' },
+  { id: 'real_user', src: getAssetPath('/apps/user.png'), label: 'Flora' },
   { id: 'leaf', emoji: '🌿', label: 'Nature' },
   { id: 'flower', emoji: '🌸', label: 'Fleur' },
   { id: 'fox', emoji: '🦊', label: 'Renard' },
@@ -1087,7 +1088,7 @@ export const SettingsApp = () => {
                 alignItems: 'center',
                 gap: '14px'
               }}>
-                <img src="/apps/warning.png" alt="Warning" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                <img src={getAssetPath('/apps/warning.png')} alt="Warning" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
                 <div>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: '#fca5a5' }}>
                     Limite de 5 utilisateurs atteinte
@@ -1135,7 +1136,7 @@ export const SettingsApp = () => {
                         }}
                       >
                         {opt.src ? (
-                          <img src={opt.src} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                          <img src={getAssetPath(opt.src)} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
                         ) : (
                           opt.emoji
                         )}
@@ -1764,7 +1765,7 @@ export const SettingsApp = () => {
               overflow: 'hidden'
             }}>
               <img
-                src="/apps/os_icon.png"
+                src={getAssetPath('/apps/os_icon.png')}
                 alt="FloraOS"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';

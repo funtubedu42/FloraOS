@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useOS } from '../../../context/OSContext';
+import { getAssetPath } from '../../../utils/paths';
 import {
   Search,
   DownloadCloud,
@@ -119,7 +120,7 @@ export const FloraStore = () => {
         justifyContent: 'space-between'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <img src="/apps/store.png" alt="FloraStore" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+          <img src={getAssetPath('/apps/store.png')} alt="FloraStore" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
           <div>
             <h1 style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'var(--font-display)', margin: 0 }}>
               FloraStore

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useOS } from '../../context/OSContext';
+import { getAssetPath } from '../../utils/paths';
 import { RefreshCw, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const SystemUpdateModal = () => {
@@ -66,7 +67,7 @@ export const SystemUpdateModal = () => {
           position: 'relative'
         }}>
           <img
-            src="/apps/os_icon.png"
+            src={getAssetPath('/apps/os_icon.png')}
             alt="FloraOS"
             style={{ width: '56px', height: '56px', objectFit: 'contain' }}
             onError={(e) => {

@@ -4,6 +4,7 @@ import { APPS } from '../constants/apps';
 import { INITIAL_FILE_SYSTEM, createUserHomeStructure } from '../constants/defaultFiles';
 import { playWarningSound, playSuccessSound, playClickSound, playStartupSound, playNotificationSound, playWindowOpenSound } from '../utils/audio';
 import { isProtectedSystemNode, isSystemLogFile } from '../utils/IconHelper';
+import { getAssetPath } from '../utils/paths';
 
 const OSContext = createContext(null);
 
@@ -59,7 +60,7 @@ export const OSProvider = ({ children }) => {
       {
         id: 'u_master',
         name: 'Luca',
-        avatar: '/apps/user.png',
+        avatar: getAssetPath('/apps/user.png'),
         role: 'Administrateur',
         pin: '1234',
         hasPassword: true,
@@ -79,7 +80,7 @@ export const OSProvider = ({ children }) => {
   const currentUser = users.find(u => u.id === activeUserId) || users[0] || {
     id: 'u_guest',
     name: 'Utilisateur',
-    avatar: '/apps/user.png',
+    avatar: getAssetPath('/apps/user.png'),
     role: 'Administrateur',
     pin: '1234',
     hasPassword: true
@@ -605,7 +606,7 @@ export const OSProvider = ({ children }) => {
   const notify = (title, message, icon = 'Bell', action = null) => {
     const id = Date.now() + Math.random().toString();
     const isWarning = icon === 'warning' || icon === '/apps/warning.png' || icon === 'AlertTriangle' || icon === 'ShieldAlert';
-    const finalIcon = isWarning ? '/apps/warning.png' : icon;
+    const finalIcon = isWarning ? getAssetPath('/apps/warning.png') : (typeof icon === 'string' && icon.startsWith('/') ? getAssetPath(icon) : icon);
 
     const notifItem = {
       id,
@@ -648,7 +649,7 @@ export const OSProvider = ({ children }) => {
     const adminObj = {
       id: 'u_master',
       name: adminUser.name || 'Luca',
-      avatar: adminUser.avatar || '/apps/user.png',
+      avatar: adminUser.avatar || getAssetPath('/apps/user.png'),
       role: 'Administrateur',
       hasPassword,
       pin: hasPassword ? adminUser.pin : '',
@@ -690,7 +691,7 @@ export const OSProvider = ({ children }) => {
     const userObj = {
       id,
       name: userData.name || `Utilisateur ${users.length + 1}`,
-      avatar: userData.avatar || '/apps/user.png',
+      avatar: userData.avatar || getAssetPath('/apps/user.png'),
       role: userData.role || 'Utilisateur',
       pin: hasPassword ? userData.pin : '',
       hasPassword: hasPassword,
@@ -1408,7 +1409,7 @@ export const OSProvider = ({ children }) => {
       isWebShortcut: true,
       url: url,
       parentId: targetParentId,
-      iconImg: '/apps/web.png',
+      iconImg: getAssetPath('/apps/web.png'),
       content: `[InternetShortcut]\nURL=${url}`,
       size: `${url.length + 30} B`,
       createdAt: Date.now()

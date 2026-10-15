@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Minus, Square, X, ShieldAlert } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
+import { getAssetPath } from '../../utils/paths';
 
 export const SystemAlertModal = () => {
   const { systemAlertModal, closeSystemAlertModal, playClickSound } = useOS();
@@ -132,11 +133,11 @@ export const SystemAlertModal = () => {
           {/* Title & Icon (matching FloraOS window standard) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
             <img
-              src="/apps/warning.png"
+              src={getAssetPath('/apps/warning.png')}
               alt=""
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = '/apps/system_file.png';
+                e.currentTarget.src = getAssetPath('/apps/system_file.png');
               }}
               style={{ width: '16px', height: '16px', objectFit: 'contain' }}
             />
@@ -252,11 +253,11 @@ export const SystemAlertModal = () => {
             flexShrink: 0
           }}>
             <img
-              src="/apps/warning.png"
+              src={getAssetPath('/apps/warning.png')}
               alt="Avertissement"
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = '/apps/shield.png';
+                e.currentTarget.src = getAssetPath('/apps/shield.png');
               }}
               style={{ width: '36px', height: '36px', objectFit: 'contain' }}
             />

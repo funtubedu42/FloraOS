@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useOS } from '../../../context/OSContext';
+import { getAssetPath } from '../../../utils/paths';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -478,7 +479,7 @@ export const BrowserApp = ({ windowData }) => {
                   <span style={{ fontSize: '13px' }}>🔍</span>
                 ) : (
                   <img
-                    src="/apps/web.png"
+                    src={getAssetPath('/apps/web.png')}
                     alt="icon"
                     style={{ width: '14px', height: '14px', objectFit: 'contain' }}
                   />
@@ -908,7 +909,7 @@ const FloraHomeView = ({ onNavigate, bookmarks }) => {
         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'
       }}>
         <img
-          src="/apps/web.png"
+          src={getAssetPath('/apps/web.png')}
           alt="Web"
           style={{ width: '46px', height: '46px', objectFit: 'contain' }}
         />
