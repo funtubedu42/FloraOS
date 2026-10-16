@@ -84,6 +84,7 @@ export const Window = ({ windowData }) => {
   const dragOffset = useRef({ x: 0, y: 0 });
   const [snapPreview, setSnapPreview] = useState(null);
   const snapPreviewRef = useRef(null);
+  const [isInteracting, setIsInteracting] = useState(false);
 
   const isResizing = useRef(false);
   const resizeDirection = useRef('se');
@@ -97,6 +98,7 @@ export const Window = ({ windowData }) => {
     if (windowData.isMaximized) return;
 
     isDragging.current = true;
+    setIsInteracting(true);
     dragOffset.current = {
       x: e.clientX - windowData.position.x,
       y: e.clientY - windowData.position.y
@@ -111,6 +113,7 @@ export const Window = ({ windowData }) => {
     if (windowData.isMaximized) return;
 
     isResizing.current = true;
+    setIsInteracting(true);
     resizeDirection.current = dir;
     resizeStart.current = {
       x: e.clientX,
@@ -128,7 +131,7 @@ export const Window = ({ windowData }) => {
       if (isDragging.current) {
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
-        const newX = Math.max(-windowData.size.width + 100, Math.min(e.clientX - dragOffset.current.x, screenW - 100));
+        const newX = Math.max(-resizeStart.current.width + 100, Math.min(e.clientX - dragOffset.current.x, screenW - 100));
         const newY = Math.max(32, Math.min(e.clientY - dragOffset.current.y, screenH - 100));
         updateWindowPosition(windowData.id, { x: newX, y: newY });
 
@@ -160,34 +163,42 @@ export const Window = ({ windowData }) => {
         let newPosX = resizeStart.current.posX;
         let newPosY = resizeStart.current.posY;
 
+        // Horizontal dimension & position locking
         if (dir.includes('e')) {
           newWidth = Math.max(minW, resizeStart.current.width + deltaX);
         } else if (dir.includes('w')) {
-          const candidateWidth = resizeStart.current.width - deltaX;
+          const rawLeft = resizeStart.current.posX + deltaX;
+          const maxRight = resizeStart.current.posX + resizeStart.current.width;
+          const clampedLeft = Math.max(-resizeStart.current.width + 100, Math.min(rawLeft, window.innerWidth - 100));
+          const candidateWidth = maxRight - clampedLeft;
           if (candidateWidth >= minW) {
             newWidth = candidateWidth;
-            newPosX = resizeStart.current.posX + deltaX;
+            newPosX = clampedLeft;
           } else {
             newWidth = minW;
-            newPosX = resizeStart.current.posX + (resizeStart.current.width - minW);
+            newPosX = maxRight - minW;
           }
         }
 
+        // Vertical dimension & position locking
         if (dir.includes('s')) {
           newHeight = Math.max(minH, resizeStart.current.height + deltaY);
         } else if (dir.includes('n')) {
-          const candidateHeight = resizeStart.current.height - deltaY;
+          const rawTop = resizeStart.current.posY + deltaY;
+          const clampedTop = Math.max(32, rawTop);
+          const maxBottom = resizeStart.current.posY + resizeStart.current.height;
+          const candidateHeight = maxBottom - clampedTop;
           if (candidateHeight >= minH) {
             newHeight = candidateHeight;
-            newPosY = Math.max(32, resizeStart.current.posY + deltaY);
+            newPosY = clampedTop;
           } else {
             newHeight = minH;
-            newPosY = resizeStart.current.posY + (resizeStart.current.height - minH);
+            newPosY = maxBottom - minH;
           }
         }
 
         updateWindowSize(windowData.id, { width: newWidth, height: newHeight });
-        if (newPosX !== windowData.position.x || newPosY !== windowData.position.y) {
+        if (newPosX !== resizeStart.current.posX || newPosY !== resizeStart.current.posY) {
           updateWindowPosition(windowData.id, { x: newPosX, y: newPosY });
         }
       }
@@ -199,6 +210,7 @@ export const Window = ({ windowData }) => {
       }
       isDragging.current = false;
       isResizing.current = false;
+      setIsInteracting(false);
       snapPreviewRef.current = null;
       setSnapPreview(null);
     };
@@ -209,7 +221,7 @@ export const Window = ({ windowData }) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [windowData.id, windowData.size, updateWindowPosition, updateWindowSize, snapWindow]);
+  }, [windowData.id, updateWindowPosition, updateWindowSize, snapWindow]);
 
   const AppComponent = APP_COMPONENTS[windowData.appId] || FileExplorer;
 
@@ -261,7 +273,7 @@ export const Window = ({ windowData }) => {
           border: windowData.isMaximized ? 'none' : undefined,
           boxShadow: windowData.isMaximized ? 'none' : undefined,
           zIndex: windowData.zIndex,
-          transition: isDragging.current || isResizing.current ? 'none' : 'transform 0.16s ease, width 0.16s ease, height 0.16s ease, top 0.16s ease, left 0.16s ease'
+          transition: isInteracting ? 'none' : 'transform 0.16s ease, width 0.16s ease, height 0.16s ease, top 0.16s ease, left 0.16s ease'
         }}
         onPointerDown={() => focusWindow(windowData.id)}
       >
@@ -418,7 +430,13 @@ export const Window = ({ windowData }) => {
       </div>
 
       {/* Window Application Body */}
-      <div className="window-content" style={{ position: 'relative' }}>
+      <div
+        className="window-content"
+        style={{
+          position: 'relative',
+          pointerEvents: isInteracting ? 'none' : 'auto'
+        }}
+      >
         <AppComponent
           windowData={windowData}
           registerUnsavedHandler={registerUnsavedHandler}

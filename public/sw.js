@@ -1,5 +1,5 @@
-// FloraOS Service Worker v0.3.0
-const CACHE_NAME = 'floraos-cache-v0.3.0';
+// FloraOS Service Worker v0.3.2
+const CACHE_NAME = 'floraos-cache-v0.3.2';
 
 const PRECACHE_ASSETS = [
   './',

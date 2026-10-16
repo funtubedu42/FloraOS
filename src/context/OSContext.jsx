@@ -8,7 +8,7 @@ import { getAssetPath } from '../utils/paths';
 
 const OSContext = createContext(null);
 
-export const CURRENT_FLORA_VERSION = '0.3.0';
+export const CURRENT_FLORA_VERSION = '0.3.2';
 export const FLORA_CODENAME = 'Bêta 0.3';
 
 const parseSemVer = (str = '') => {

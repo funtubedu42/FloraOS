@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.2",
   "name": "FloraOS Bêta 0.3",
-  "build": "20261016.beta03",
+  "build": "20261016.beta032",
   "releaseDate": "16 Octobre 2026",
   "githubRepo": "funtubedu42/FloraOS",
   "changelog": [
@@ -12,7 +12,8 @@
     "Sauvegarde et Restauration du système (.json) dans les Paramètres",
     "Nouvelle application FloraPaint avec palette de dessin, formes et export PNG",
     "Nouvelle application Notes & Post-it repositionnables avec palette de couleurs",
-    "Nouveau mini-jeu d'arcade FloraSnake avec bonus dorés, sons rétro et contrôles tactiles",
-    "Support de l'installation PWA (Progressive Web App) et Service Worker hors-ligne"
+    "Nouveau mini-jeu d'arcade FloraSnake avec bonus dorés, sons rétro, menu et réglages",
+    "Support de l'installation PWA (Progressive Web App) et Service Worker hors-ligne",
+    "Corrections : redimensionnement fluide multi-angles, sélection souris et navigation Snake"
   ]
 }

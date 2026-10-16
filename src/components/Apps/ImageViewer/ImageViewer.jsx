@@ -35,13 +35,21 @@ export const ImageViewer = ({ windowData }) => {
   const [showInfo, setShowInfo] = useState(false);
   const [activeImageId, setActiveImageId] = useState(file?.id || null);
 
+  // Sync when windowData fileContext changes
+  React.useEffect(() => {
+    if (file?.id) {
+      setActiveImageId(file.id);
+      handleReset();
+    }
+  }, [file?.id]);
+
   // Discover all images in VFS
   const allImages = useMemo(() => {
     return Object.values(fileSystem || {})
       .filter(node => {
         if (!node || node.type !== 'file' || node.parentId === 'trash') return false;
         const ext = (node.name || '').split('.').pop().toLowerCase();
-        return ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext);
+        return ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif', 'bmp', 'ico'].includes(ext);
       })
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   }, [fileSystem]);
