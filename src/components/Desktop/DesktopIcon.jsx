@@ -177,7 +177,24 @@ export const DesktopIcon = ({ nodeId, isSelected, onSelect, defaultPos }) => {
       }}
     >
       <div className="desktop-icon-visual" style={{ position: 'relative' }}>
-        {imageSrc ? (
+        {((node.url || (node.content && typeof node.content === 'string' && node.content.startsWith('data:image'))) && node.extension && ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(node.extension.toLowerCase())) ? (
+          <img
+            src={node.url || node.content}
+            alt={node.name}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = getAssetPath('/apps/paint_file.png');
+            }}
+            style={{
+              width: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
+              height: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
+              objectFit: 'cover',
+              borderRadius: '8px'
+            }}
+          />
+        ) : imageSrc ? (
           <img
             src={getAssetPath(imageSrc)}
             alt={node.name}
@@ -185,25 +202,12 @@ export const DesktopIcon = ({ nodeId, isSelected, onSelect, defaultPos }) => {
             onDragStart={(e) => e.preventDefault()}
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = getAssetPath('/apps/default_app.png');
+              e.currentTarget.src = getAssetPath('/apps/paint_file.png');
             }}
             style={{
               width: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
               height: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
               objectFit: 'contain'
-            }}
-          />
-        ) : node.url && node.extension && ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(node.extension.toLowerCase()) ? (
-          <img
-            src={node.url}
-            alt={node.name}
-            draggable={false}
-            onDragStart={(e) => e.preventDefault()}
-            style={{
-              width: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
-              height: `${settings?.iconSize === 'small' ? 34 : settings?.iconSize === 'large' ? 52 : 42}px`,
-              objectFit: 'cover',
-              borderRadius: '8px'
             }}
           />
         ) : (

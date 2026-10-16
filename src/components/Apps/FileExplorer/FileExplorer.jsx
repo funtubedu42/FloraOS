@@ -836,7 +836,19 @@ export const FileExplorer = ({ windowData }) => {
                       background: 'transparent',
                       marginBottom: '6px'
                     }}>
-                      {imageSrc ? (
+                      {((node.url || (node.content && typeof node.content === 'string' && node.content.startsWith('data:image'))) && node.extension && ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(node.extension.toLowerCase())) ? (
+                        <img
+                          src={node.url || node.content}
+                          alt={node.name}
+                          draggable={false}
+                          onDragStart={(e) => e.preventDefault()}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = getAssetPath('/apps/paint_file.png');
+                          }}
+                          style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                      ) : imageSrc ? (
                         <img
                           src={imageSrc}
                           alt={node.name}
@@ -844,17 +856,9 @@ export const FileExplorer = ({ windowData }) => {
                           onDragStart={(e) => e.preventDefault()}
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = getAssetPath('/apps/default_app.png');
+                            e.currentTarget.src = getAssetPath('/apps/paint_file.png');
                           }}
                           style={{ width: '42px', height: '42px', objectFit: 'contain' }}
-                        />
-                      ) : node.url && node.extension && ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(node.extension.toLowerCase()) ? (
-                        <img
-                          src={node.url}
-                          alt={node.name}
-                          draggable={false}
-                          onDragStart={(e) => e.preventDefault()}
-                          style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '8px' }}
                         />
                       ) : (
                         <DynamicIcon name={iconName} size={30} color={color} />

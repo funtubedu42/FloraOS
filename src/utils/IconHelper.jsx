@@ -210,7 +210,10 @@ export const getFileIconDetails = (node) => {
       case 'gif':
       case 'webp':
       case 'svg':
-        return { iconName: 'Image', color: '#10b981' };
+      case 'bmp':
+      case 'ico':
+      case 'paint':
+        return { iconName: 'Image', color: '#10b981', imageSrc: '/apps/paint_file.png' };
       case 'mp4':
       case 'webm':
       case 'ogg':
