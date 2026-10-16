@@ -17,7 +17,9 @@ import {
   Sparkles,
   ShieldAlert,
   Flame,
-  Snowflake
+  Snowflake,
+  Home,
+  Settings
 } from 'lucide-react';
 
 const GRID_SIZE = 20;
@@ -215,10 +217,26 @@ export const SnakeApp = ({ windowData }) => {
     setGameState(prev => prev === 'playing' ? 'paused' : 'playing');
   };
 
+  const goToMenu = () => {
+    playClickSound();
+    if (musicRef.current) {
+      musicRef.current.pause();
+    }
+    setGameState('idle');
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       const key = e.key;
+
+      if (key === 'Escape') {
+        if (gameState !== 'idle') {
+          e.preventDefault();
+          goToMenu();
+          return;
+        }
+      }
 
       if (gameState === 'idle' || gameState === 'gameover') {
         if (key === 'Enter' || key === ' ') {
@@ -777,8 +795,32 @@ export const SnakeApp = ({ windowData }) => {
           <span style={{ fontSize: '12px', fontWeight: 700, color: '#fbbf24' }}>Record : {highScore}</span>
         </div>
 
-        {/* Sound & Music Toggles */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        {/* Sound & Music Toggles + Menu Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          {/* Menu / Settings Button when in-game */}
+          {gameState !== 'idle' && (
+            <button
+              onClick={goToMenu}
+              title="Retour au menu & paramètres (Échap)"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '6px',
+                color: '#e2e8f0',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '11px',
+                fontWeight: 600,
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Home size={13} /> Menu
+            </button>
+          )}
+
           {/* Background Music Toggle */}
           <button
             onClick={() => setMusicEnabled(prev => !prev)}
@@ -953,26 +995,46 @@ export const SnakeApp = ({ windowData }) => {
                   Partie en Pause
                 </h3>
                 <p style={{ fontSize: '11.5px', color: '#94a3b8', margin: 0 }}>
-                  Appuyez sur Espace pour reprendre
+                  Appuyez sur Espace pour reprendre ou Échap pour le menu
                 </p>
-                <button
-                  onClick={togglePause}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '9px 22px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: '#38bdf8',
-                    color: '#fff',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Play size={15} /> Reprendre
-                </button>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+                  <button
+                    onClick={togglePause}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '9px 18px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: '#38bdf8',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Play size={15} /> Reprendre
+                  </button>
+                  <button
+                    onClick={goToMenu}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '9px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      color: '#e2e8f0',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Home size={15} /> Menu & Paramètres
+                  </button>
+                </div>
               </>
             )}
 
@@ -998,25 +1060,45 @@ export const SnakeApp = ({ windowData }) => {
                     ✨ Nouveau Record Personnel !
                   </div>
                 )}
-                <button
-                  onClick={startGame}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 24px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: '#10b981',
-                    color: '#fff',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
-                  }}
-                >
-                  <RotateCcw size={15} /> Rejouer (Entrée / Espace)
-                </button>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '6px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button
+                    onClick={startGame}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: '#10b981',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+                    }}
+                  >
+                    <RotateCcw size={15} /> Rejouer (Entrée)
+                  </button>
+                  <button
+                    onClick={goToMenu}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 18px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      color: '#e2e8f0',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Settings size={15} /> Menu & Paramètres
+                  </button>
+                </div>
               </>
             )}
           </div>
