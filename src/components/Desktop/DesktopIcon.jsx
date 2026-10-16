@@ -161,6 +161,7 @@ export const DesktopIcon = ({ nodeId, isSelected, onSelect, defaultPos }) => {
       data-desktop-icon-id={nodeId}
       data-folder-target={node.type === 'folder' ? nodeId : undefined}
       onPointerDown={handlePointerDown}
+      onMouseDown={(e) => e.stopPropagation()}
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       title={tooltipText}

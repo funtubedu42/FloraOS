@@ -52,14 +52,14 @@ export const Desktop = () => {
   }, [selectedIds, clipboard, activeDesktopId, desktopChildren, copyNode, cutNode, pasteNode, deleteNode]);
 
   // Marquee selection handlers
-  const handlePointerDown = (e) => {
+  const handleMouseDown = (e) => {
     // Only handle primary left click
     if (e.button !== 0) return;
 
     // Do not start marquee if user clicked on an icon, a window, taskbar, start menu, context menu or modal
     if (
       e.target.closest('[data-desktop-icon-id]') ||
-      e.target.closest('.window-container') ||
+      e.target.closest('.flora-window') ||
       e.target.closest('.flora-taskbar') ||
       e.target.closest('.flora-start-menu') ||
       e.target.closest('.flora-context-menu') ||
@@ -67,6 +67,9 @@ export const Desktop = () => {
     ) {
       return;
     }
+
+    // Crucial: prevent browser native text selection & native drag so mouse dragging is reliable
+    e.preventDefault();
 
     closeContextMenu();
     setActiveWindowId(null);
@@ -86,7 +89,7 @@ export const Desktop = () => {
       height: 0
     });
 
-    const handleWindowPointerMove = (moveEvt) => {
+    const handleWindowMouseMove = (moveEvt) => {
       if (!isDraggingMarquee.current) return;
       const currentX = moveEvt.clientX;
       const currentY = moveEvt.clientY;
@@ -129,17 +132,17 @@ export const Desktop = () => {
       }
     };
 
-    const handleWindowPointerUp = () => {
-      window.removeEventListener('pointermove', handleWindowPointerMove);
-      window.removeEventListener('pointerup', handleWindowPointerUp);
+    const handleWindowMouseUp = () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
       if (isDraggingMarquee.current) {
         isDraggingMarquee.current = false;
         setMarquee(null);
       }
     };
 
-    window.addEventListener('pointermove', handleWindowPointerMove);
-    window.addEventListener('pointerup', handleWindowPointerUp);
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('mouseup', handleWindowMouseUp);
   };
 
   // Host OS file drag-and-drop onto FloraOS desktop
@@ -238,7 +241,7 @@ export const Desktop = () => {
         userSelect: 'none',
         WebkitUserSelect: 'none'
       }}
-      onPointerDown={handlePointerDown}
+      onMouseDown={handleMouseDown}
       onContextMenu={handleContextMenu}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
@@ -248,7 +251,7 @@ export const Desktop = () => {
         <div
           className="selection-marquee"
           style={{
-            position: 'fixed',
+            position: 'absolute',
             left: `${marquee.x}px`,
             top: `${marquee.y}px`,
             width: `${marquee.width}px`,

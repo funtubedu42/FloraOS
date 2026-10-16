@@ -171,64 +171,96 @@ export const FileExplorer = ({ windowData }) => {
       return;
     }
 
+    e.preventDefault();
+
     if (!e.ctrlKey && !e.metaKey) {
       setSelectedIds([]);
     }
 
+    const isMulti = e.ctrlKey || e.metaKey;
+    const initialSelection = isMulti ? [...selectedIds] : [];
+
     isDraggingMarquee.current = true;
-    startPos.current = { x: e.clientX, y: e.clientY };
+    const paneRect = contentPaneRef.current?.getBoundingClientRect() || { left: 0, top: 0 };
+    const scrollLeft = contentPaneRef.current?.scrollLeft || 0;
+    const scrollTop = contentPaneRef.current?.scrollTop || 0;
+
+    const startPaneX = e.clientX - paneRect.left + scrollLeft;
+    const startPaneY = e.clientY - paneRect.top + scrollTop;
+
+    startPos.current = {
+      paneX: startPaneX,
+      paneY: startPaneY,
+      clientX: e.clientX,
+      clientY: e.clientY
+    };
+
     setMarquee({
-      x: e.clientX,
-      y: e.clientY,
+      x: startPaneX,
+      y: startPaneY,
       width: 0,
       height: 0
     });
-  };
 
-  const handlePaneMouseMove = (e) => {
-    if (!isDraggingMarquee.current) return;
-    const currentX = e.clientX;
-    const currentY = e.clientY;
+    const handleWindowMouseMove = (moveEvt) => {
+      if (!isDraggingMarquee.current || !contentPaneRef.current) return;
+      const currentPaneRect = contentPaneRef.current.getBoundingClientRect();
+      const currentScrollLeft = contentPaneRef.current.scrollLeft || 0;
+      const currentScrollTop = contentPaneRef.current.scrollTop || 0;
 
-    const x = Math.min(startPos.current.x, currentX);
-    const y = Math.min(startPos.current.y, currentY);
-    const width = Math.abs(currentX - startPos.current.x);
-    const height = Math.abs(currentY - startPos.current.y);
+      const currentPaneX = moveEvt.clientX - currentPaneRect.left + currentScrollLeft;
+      const currentPaneY = moveEvt.clientY - currentPaneRect.top + currentScrollTop;
 
-    setMarquee({ x, y, width, height });
+      const x = Math.min(startPos.current.paneX, currentPaneX);
+      const y = Math.min(startPos.current.paneY, currentPaneY);
+      const width = Math.abs(currentPaneX - startPos.current.paneX);
+      const height = Math.abs(currentPaneY - startPos.current.paneY);
 
-    if (width > 3 || height > 3) {
-      const mLeft = x;
-      const mTop = y;
-      const mRight = x + width;
-      const mBottom = y + height;
+      setMarquee({ x, y, width, height });
 
-      const itemEls = contentPaneRef.current?.querySelectorAll('[data-explorer-item-id]');
-      if (itemEls) {
-        const matched = [];
-        itemEls.forEach(el => {
-          const rect = el.getBoundingClientRect();
-          const intersects = !(
-            rect.right < mLeft ||
-            rect.left > mRight ||
-            rect.bottom < mTop ||
-            rect.top > mBottom
-          );
-          if (intersects) {
-            const id = el.getAttribute('data-explorer-item-id');
-            if (id) matched.push(id);
+      if (width > 3 || height > 3) {
+        const mLeft = Math.min(startPos.current.clientX, moveEvt.clientX);
+        const mTop = Math.min(startPos.current.clientY, moveEvt.clientY);
+        const mRight = Math.max(startPos.current.clientX, moveEvt.clientX);
+        const mBottom = Math.max(startPos.current.clientY, moveEvt.clientY);
+
+        const itemEls = contentPaneRef.current?.querySelectorAll('[data-explorer-item-id]');
+        if (itemEls) {
+          const matched = [];
+          itemEls.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const intersects = !(
+              rect.right < mLeft ||
+              rect.left > mRight ||
+              rect.bottom < mTop ||
+              rect.top > mBottom
+            );
+            if (intersects) {
+              const id = el.getAttribute('data-explorer-item-id');
+              if (id) matched.push(id);
+            }
+          });
+
+          if (isMulti) {
+            setSelectedIds(Array.from(new Set([...initialSelection, ...matched])));
+          } else {
+            setSelectedIds(matched);
           }
-        });
-        setSelectedIds(matched);
+        }
       }
-    }
-  };
+    };
 
-  const handlePaneMouseUp = () => {
-    if (isDraggingMarquee.current) {
-      isDraggingMarquee.current = false;
-      setMarquee(null);
-    }
+    const handleWindowMouseUp = () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+      if (isDraggingMarquee.current) {
+        isDraggingMarquee.current = false;
+        setMarquee(null);
+      }
+    };
+
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('mouseup', handleWindowMouseUp);
   };
 
   // Upload handler
@@ -626,8 +658,6 @@ export const FileExplorer = ({ windowData }) => {
           ref={contentPaneRef}
           style={{ flex: 1, overflowY: 'auto', padding: '16px', position: 'relative', userSelect: 'none' }}
           onMouseDown={handlePaneMouseDown}
-          onMouseMove={handlePaneMouseMove}
-          onMouseUp={handlePaneMouseUp}
           onContextMenu={(e) => {
             if (!e.target.closest('[data-explorer-item-id]')) {
               openContextMenu(e, 'explorer', null, currentFolderId);
@@ -639,13 +669,13 @@ export const FileExplorer = ({ windowData }) => {
             <div
               className="selection-marquee"
               style={{
-                position: 'fixed',
+                position: 'absolute',
                 left: `${marquee.x}px`,
                 top: `${marquee.y}px`,
                 width: `${marquee.width}px`,
                 height: `${marquee.height}px`,
                 pointerEvents: 'none',
-                zIndex: 9999
+                zIndex: 99
               }}
             />
           )}
