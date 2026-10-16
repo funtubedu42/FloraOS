@@ -209,10 +209,10 @@ export const APPS = {
     icon: 'Gamepad2',
     iconImg: getAssetPath('/apps/snake_app.png'),
     color: '#10b981',
-    defaultWidth: 450,
-    defaultHeight: 640,
-    minWidth: 420,
-    minHeight: 560,
+    defaultWidth: 480,
+    defaultHeight: 650,
+    minWidth: 440,
+    minHeight: 600,
     isDockPinned: false,
     category: 'Jeux'
   }
