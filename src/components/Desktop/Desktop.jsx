@@ -52,68 +52,94 @@ export const Desktop = () => {
   }, [selectedIds, clipboard, activeDesktopId, desktopChildren, copyNode, cutNode, pasteNode, deleteNode]);
 
   // Marquee selection handlers
-  const handleMouseDown = (e) => {
-    // Only trigger if clicking directly on the desktop background
-    if (e.target.classList.contains('desktop-bg-canvas')) {
-      closeContextMenu();
-      setActiveWindowId(null);
-      if (!e.ctrlKey && !e.metaKey) {
-        setSelectedIds([]);
-      }
-      isDraggingMarquee.current = true;
-      startPos.current = { x: e.clientX, y: e.clientY };
-      setMarquee({
-        x: e.clientX,
-        y: e.clientY,
-        width: 0,
-        height: 0
-      });
+  const handlePointerDown = (e) => {
+    // Only handle primary left click
+    if (e.button !== 0) return;
+
+    // Do not start marquee if user clicked on an icon, a window, taskbar, start menu, context menu or modal
+    if (
+      e.target.closest('[data-desktop-icon-id]') ||
+      e.target.closest('.window-container') ||
+      e.target.closest('.flora-taskbar') ||
+      e.target.closest('.flora-start-menu') ||
+      e.target.closest('.flora-context-menu') ||
+      e.target.closest('.flora-modal-card')
+    ) {
+      return;
     }
-  };
 
-  const handleMouseMove = (e) => {
-    if (!isDraggingMarquee.current) return;
-    const currentX = e.clientX;
-    const currentY = e.clientY;
+    closeContextMenu();
+    setActiveWindowId(null);
 
-    const x = Math.min(startPos.current.x, currentX);
-    const y = Math.min(startPos.current.y, currentY);
-    const width = Math.abs(currentX - startPos.current.x);
-    const height = Math.abs(currentY - startPos.current.y);
+    const isMulti = e.ctrlKey || e.metaKey;
+    const initialSelection = isMulti ? [...selectedIds] : [];
+    if (!isMulti) {
+      setSelectedIds([]);
+    }
 
-    setMarquee({ x, y, width, height });
-
-    // Calculate which desktop icons intersect with the selection box
-    const mLeft = x;
-    const mTop = y;
-    const mRight = x + width;
-    const mBottom = y + height;
-
-    const iconElements = document.querySelectorAll('[data-desktop-icon-id]');
-    const matched = [];
-
-    iconElements.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      const intersects = !(
-        rect.right < mLeft ||
-        rect.left > mRight ||
-        rect.bottom < mTop ||
-        rect.top > mBottom
-      );
-      if (intersects) {
-        const id = el.getAttribute('data-desktop-icon-id');
-        if (id) matched.push(id);
-      }
+    isDraggingMarquee.current = true;
+    startPos.current = { x: e.clientX, y: e.clientY };
+    setMarquee({
+      x: e.clientX,
+      y: e.clientY,
+      width: 0,
+      height: 0
     });
 
-    setSelectedIds(matched);
-  };
+    const handleWindowPointerMove = (moveEvt) => {
+      if (!isDraggingMarquee.current) return;
+      const currentX = moveEvt.clientX;
+      const currentY = moveEvt.clientY;
 
-  const handleMouseUp = () => {
-    if (isDraggingMarquee.current) {
-      isDraggingMarquee.current = false;
-      setMarquee(null);
-    }
+      const x = Math.min(startPos.current.x, currentX);
+      const y = Math.min(startPos.current.y, currentY);
+      const width = Math.abs(currentX - startPos.current.x);
+      const height = Math.abs(currentY - startPos.current.y);
+
+      setMarquee({ x, y, width, height });
+
+      if (width > 3 || height > 3) {
+        const mLeft = x;
+        const mTop = y;
+        const mRight = x + width;
+        const mBottom = y + height;
+
+        const iconElements = document.querySelectorAll('[data-desktop-icon-id]');
+        const matched = [];
+
+        iconElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const intersects = !(
+            rect.right < mLeft ||
+            rect.left > mRight ||
+            rect.bottom < mTop ||
+            rect.top > mBottom
+          );
+          if (intersects) {
+            const id = el.getAttribute('data-desktop-icon-id');
+            if (id) matched.push(id);
+          }
+        });
+
+        if (isMulti) {
+          setSelectedIds(Array.from(new Set([...initialSelection, ...matched])));
+        } else {
+          setSelectedIds(matched);
+        }
+      }
+    };
+
+    const handleWindowPointerUp = () => {
+      window.removeEventListener('pointermove', handleWindowPointerMove);
+      window.removeEventListener('pointerup', handleWindowPointerUp);
+      if (isDraggingMarquee.current) {
+        isDraggingMarquee.current = false;
+        setMarquee(null);
+      }
+    };
+
+    window.addEventListener('pointermove', handleWindowPointerMove);
+    window.addEventListener('pointerup', handleWindowPointerUp);
   };
 
   // Host OS file drag-and-drop onto FloraOS desktop
@@ -167,7 +193,7 @@ export const Desktop = () => {
   };
 
   const handleContextMenu = (e) => {
-    if (e.target.classList.contains('desktop-bg-canvas')) {
+    if (!e.target.closest('[data-desktop-icon-id]')) {
       openContextMenu(e, 'desktop', null, activeDesktopId);
     }
   };
@@ -208,11 +234,11 @@ export const Desktop = () => {
       style={{
         position: 'absolute',
         inset: 0,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onPointerDown={handlePointerDown}
       onContextMenu={handleContextMenu}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
@@ -222,10 +248,13 @@ export const Desktop = () => {
         <div
           className="selection-marquee"
           style={{
+            position: 'fixed',
             left: `${marquee.x}px`,
             top: `${marquee.y}px`,
             width: `${marquee.width}px`,
-            height: `${marquee.height}px`
+            height: `${marquee.height}px`,
+            pointerEvents: 'none',
+            zIndex: 9999
           }}
         />
       )}
